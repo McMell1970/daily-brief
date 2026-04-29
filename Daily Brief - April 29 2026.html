@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Daily Market Brief — Wed 29 Apr 2026</title>
+<style>
+  :root{
+    --bg:#0c0f14; --panel:#131822; --panel2:#1a2030; --line:#27314a;
+    --text:#e7ecf5; --muted:#9aa6bd; --acc:#67e8f9; --acc2:#a78bfa;
+    --pos:#22c55e; --neg:#ef4444; --warn:#f59e0b;
+    --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14.5px;line-height:1.55}
+  a{color:var(--acc);text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px}
+  h1{font-size:26px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  h3{font-size:15px;margin:16px 0 6px;color:var(--acc)}
+  .sub{color:var(--muted);font-size:13px}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 8px}
+  .tab{padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);cursor:pointer;color:var(--muted);font-size:13px}
+  .tab.active{background:var(--acc);color:#06121a;border-color:var(--acc);font-weight:600}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:12px 0}
+  .grid{display:grid;gap:14px}
+  .grid.cols-2{grid-template-columns:repeat(2,1fr)}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:760px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}}
+  .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+  .kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .kpi .val{font-size:20px;font-weight:600;margin-top:4px}
+  .kpi .chg{font-size:13px;margin-top:2px}
+  .pos{color:var(--pos)} .neg{color:var(--neg)} .warn{color:var(--warn)} .mut{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  tr:hover td{background:rgba(103,232,249,.05)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}
+  .pill.hold{color:var(--acc);border-color:var(--acc)}
+  .pill.add{color:var(--pos);border-color:var(--pos)}
+  .pill.trim{color:var(--warn);border-color:var(--warn)}
+  .pill.watch{color:var(--muted)}
+  .row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .meter{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:6px}
+  .meter > span{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444)}
+  select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:var(--font);min-width:280px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+  .ltabel{font-size:12px;color:var(--muted);margin-bottom:2px}
+  .small{font-size:12.5px;color:var(--muted)}
+  ol{padding-left:20px} ol li{margin:8px 0}
+  .footer{color:var(--muted);font-size:12px;margin:24px 0 8px;text-align:center;border-top:1px solid var(--line);padding-top:14px}
+  .twocol{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr}}
+  .bar{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:4px}
+  .bar > span{display:block;height:100%}
+  .bar.rsi > span{background:var(--acc)}
+  .stat-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .stat-row:last-child{border-bottom:none}
+  .stat-row .k{color:var(--muted)}
+  .pn{font-weight:600}
+  .badge-blue{background:rgba(103,232,249,.15);color:var(--acc);padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+  .badge-purple{background:rgba(167,139,250,.15);color:var(--acc2);padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Daily Market Brief — Wednesday, 29 April 2026</h1>
+  <div class="sub">31 positions + cash · EUR/USD ≈ 1.179 · Data as of 28–29 Apr (pre-FOMC)</div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="overview">Overview</button>
+  <button class="tab" data-tab="actions">Today's Actions</button>
+  <button class="tab" data-tab="snapshot">Market Snapshot</button>
+  <button class="tab" data-tab="scenarios">Scenarios</button>
+  <button class="tab" data-tab="portfolio">Portfolio</button>
+  <button class="tab" data-tab="dive">Stock Deep-Dive</button>
+  <button class="tab" data-tab="dates">Key Dates</button>
+</nav>
+
+<!-- ============ OVERVIEW ============ -->
+<section class="tab-pane active" data-pane="overview">
+  <div class="panel">
+    <h3>What changed since yesterday — 3 key developments</h3>
+    <ol>
+      <li><b>AI selloff hits tech.</b> A WSJ report on OpenAI missing internal revenue & user-growth targets dragged the AI-infrastructure complex: S&amp;P 500 −0.49% to 7,138.80, Nasdaq −0.9% to 24,663.80. Micron −4.87%, Lumentum −8.0%, Celestica −15.7% (despite an earnings beat &amp; raise), Credo −8.2%, Western Digital −3.22%. Sentiment-driven, not fundamentals — the first clean buy-the-dip window in a month.</li>
+      <li><b>Oil breaks $111 Brent / $100 WTI.</b> Trump rejected Iran's "Hormuz-only, postpone nuclear" proposal. Talks formally on hold. WTI $99.93 +3%, Brent $111.26 +3%. Energy supply shock now compounds Fed inflation problem.</li>
+      <li><b>FOMC decision day — Powell's last as Chair.</b> 100% probability of hold at 3.50–3.75% per FedWatch. Decision 20:00 CET, presser 20:30. Tonight after close: MSFT/GOOGL/META/AMZN report. Tomorrow 14:30 CET: Q1 GDP + core PCE. The next 36 hours set May's tone.</li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <h3>Top action for today</h3>
+    <p><b>Add 12–15 shares of CRDO around $165–$170</b> — the AI-infrastructure selloff handed back the first −8% pullback in months on a structural top-pick. Cap deployment at ~€2,100 and hold the rest of dry powder for tomorrow's PCE/GDP window.</p>
+  </div>
+</section>
+
+<!-- ============ ACTIONS ============ -->
+<section class="tab-pane" data-pane="actions" hidden>
+  <div class="panel">
+    <h3>Three concrete actions</h3>
+    <div class="grid cols-3">
+      <div class="kpi">
+        <div class="lbl">Action 1 — BUY <span class="badge-blue">CRDO</span></div>
+        <div class="val pos">+12 to +15 shares</div>
+        <div class="small">Buy zone <b>$165–$170</b>. Deploy ~€2,100. Yesterday's −8.2% is sentiment, not company-specific. BNP Paribas top AI pick for 2026.</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Action 2 — HOLD <span class="badge-purple">MU</span> with stop</div>
+        <div class="val warn">Stop at $480</div>
+        <div class="small">Hold all 70 shares. Conditional sell only if MU breaks $480. Three new buy upgrades this week ($600/$700/$1,000 targets).</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Action 3 — HOLD CASH</div>
+        <div class="val">~€10,200 reserve</div>
+        <div class="small">Keep dry powder through 14:30 CET tomorrow. Do not pre-fund BBVA / SNDK / WDC ahead of earnings.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SNAPSHOT ============ -->
+<section class="tab-pane" data-pane="snapshot" hidden>
+  <div class="panel">
+    <h3>Market Snapshot</h3>
+    <div class="grid cols-4">
+      <div class="kpi"><div class="lbl">S&amp;P 500</div><div class="val">7,138.80</div><div class="chg neg">−0.49%</div></div>
+      <div class="kpi"><div class="lbl">Nasdaq Comp.</div><div class="val">24,663.80</div><div class="chg neg">−0.9%</div></div>
+      <div class="kpi"><div class="lbl">Dow Jones</div><div class="val">49,141.93</div><div class="chg neg">−0.05%</div></div>
+      <div class="kpi"><div class="lbl">VIX</div><div class="val">~18.9</div><div class="chg warn">Below 19, slightly up</div></div>
+      <div class="kpi"><div class="lbl">Gold (spot)</div><div class="val">$4,605–$4,613</div><div class="chg pos">Modest uptick</div></div>
+      <div class="kpi"><div class="lbl">IGLN (London)</div><div class="val">~91.5p</div><div class="chg mut">~Flat</div></div>
+      <div class="kpi"><div class="lbl">WTI Crude</div><div class="val">$99.93</div><div class="chg pos">+3.0%</div></div>
+      <div class="kpi"><div class="lbl">Brent Crude</div><div class="val">$111.26</div><div class="chg pos">+3.0%</div></div>
+      <div class="kpi"><div class="lbl">EUR/USD</div><div class="val">~1.179</div><div class="chg mut">Stable</div></div>
+      <div class="kpi"><div class="lbl">10Y Treasury</div><div class="val">Watch Powell</div><div class="chg mut">Pivots tonight</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCENARIOS ============ -->
+<section class="tab-pane" data-pane="scenarios" hidden>
+  <div class="panel">
+    <h3>Scenario Probabilities</h3>
+    <table>
+      <thead><tr><th>Scenario</th><th>Prob.</th><th>Δ vs last week</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td><b>Prolonged Iran stalemate, oil &gt;$100</b></td><td><b>50%</b></td><td class="neg">↑ +5%</td><td>Trump rejected Hormuz-only deal; nuclear is the sticking point.</td></tr>
+        <tr><td>Partial Hormuz deal (delayed nuclear)</td><td>20%</td><td class="pos">↓ −5%</td><td>Iran's offer on the table but Washington has dismissed it.</td></tr>
+        <tr><td>Full ceasefire + nuclear framework</td><td>12%</td><td class="pos">↓ −3%</td><td>No bridge currently visible.</td></tr>
+        <tr><td>Conflict escalation (Hormuz closure)</td><td>10%</td><td class="mut">→ flat</td><td>Both sides preserving optionality.</td></tr>
+        <tr><td><b>Fed delivers hawkish hold today</b></td><td><b>55%</b></td><td class="neg">↑ +10%</td><td>Energy inflation forcing Powell's hand; 3.1% core PCE expected.</td></tr>
+        <tr><td>Fed hints at H2-2026 cut</td><td>20%</td><td class="pos">↓ −5%</td><td>Possible but oil makes it harder.</td></tr>
+        <tr><td>Tomorrow's PCE prints ≤3.0%</td><td>35%</td><td class="mut">→ flat</td><td>Cleveland Fed nowcast 3.1%; sub-3% would be a relief-rally trigger.</td></tr>
+        <tr><td><b>AI-spending narrative breaks (multi-week selloff)</b></td><td>25%</td><td class="neg">↑ +10%</td><td>OpenAI WSJ story is the first crack in mega-cap capex consensus.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ PORTFOLIO ============ -->
+<section class="tab-pane" data-pane="portfolio" hidden>
+  <div class="panel">
+    <h3>Portfolio summary</h3>
+    <div class="grid cols-4">
+      <div class="kpi"><div class="lbl">Est. Total Value</div><div class="val">~€280–288k</div><div class="small">31 positions + cash</div></div>
+      <div class="kpi"><div class="lbl">Cash (EUR)</div><div class="val">€3,229</div><div class="small">~1.1%</div></div>
+      <div class="kpi"><div class="lbl">Cash (USD eq.)</div><div class="val">€9,112</div><div class="small">~3.2%</div></div>
+      <div class="kpi"><div class="lbl">Dry powder</div><div class="val">~€12,341 (~10%)</div><div class="small pos">Above floor</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>All positions — P&amp;L · Indicators · Action</h3>
+    <table id="ptable">
+      <thead><tr>
+        <th>Ticker</th><th>Cost</th><th>Last</th><th>P&amp;L</th><th>RSI</th><th>MACD</th><th>Div %</th><th>Recommendation</th>
+      </tr></thead>
+      <tbody><!-- filled by JS --></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ DEEP-DIVE ============ -->
+<section class="tab-pane" data-pane="dive" hidden>
+  <div class="panel">
+    <div class="row">
+      <h3 style="margin:0">Stock Deep-Dive</h3>
+      <div>
+        <span class="ltabel">Pick a position</span>
+        <select id="diveSel"></select>
+      </div>
+    </div>
+  </div>
+
+  <div id="diveBody"></div>
+</section>
+
+<!-- ============ DATES ============ -->
+<section class="tab-pane" data-pane="dates" hidden>
+  <div class="panel">
+    <h3>Key Dates This Week & Next</h3>
+    <table>
+      <thead><tr><th>Date</th><th>Event</th><th>Portfolio relevance</th></tr></thead>
+      <tbody>
+        <tr><td>Wed Apr 29</td><td><b>FOMC decision (20:00 CET) + Powell presser (20:30)</b></td><td>Critical — Powell's last meeting</td></tr>
+        <tr><td>Wed Apr 29</td><td>AbbVie Q1 (pre-market)</td><td>ABBV</td></tr>
+        <tr><td>Wed Apr 29</td><td>Iberdrola Q1 (09:30 CET)</td><td>IBE</td></tr>
+        <tr><td>Wed Apr 29</td><td>MAPFRE Q1</td><td>MAP</td></tr>
+        <tr><td>Wed Apr 29</td><td>TTM Technologies Q1</td><td>TTMI</td></tr>
+        <tr><td>Wed Apr 29</td><td>Santander Q1 — already reported, beat (€3.56B underlying, +12%)</td><td>SAN</td></tr>
+        <tr><td>Wed Apr 29</td><td>MSFT, GOOGL, META, AMZN (after close)</td><td>EQQQ + AI sentiment</td></tr>
+        <tr><td>Thu Apr 30</td><td><b>Q1 GDP + Core PCE + ECI (14:30 CET)</b></td><td>Macro pivot</td></tr>
+        <tr><td>Thu Apr 30</td><td>SanDisk + Western Digital Q3 FY26</td><td>SNDK + WDC</td></tr>
+        <tr><td>Thu Apr 30</td><td>BBVA Q1</td><td>BBVA</td></tr>
+        <tr><td>Thu Apr 30</td><td>Apple earnings</td><td>Tech sentiment</td></tr>
+        <tr><td>Mon May 4</td><td>Unicaja Banco Q1</td><td>UNI</td></tr>
+        <tr><td>Mon May 5</td><td>Lumentum Q3 FY26 (after close)</td><td>LITE</td></tr>
+        <tr><td>Thu May 14</td><td>Siemens Energy H1</td><td>ENR</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="footer">Brief generated automatically — 29 Apr 2026 · Sources: CNBC, Bloomberg, Al Jazeera, Yahoo Finance, TipRanks, MarketBeat, Benzinga, Kiplinger, Trading Economics, Fortune, NPR, CBS News, The Motley Fool, Iberdrola IR, Santander IR, MAPFRE IR, TheStreet, Investing.com, Cleveland Fed, BEA</div>
+
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const positions = [
+  // EU Banks
+  {sym:"ABN", name:"ABN AMRO Bank NV", grp:"EU Banks", ccy:"EUR", sh:350, cost:30.10, last:28.50, rsi:42, macd:"Below signal, flattening", div:7.0, rec:"Hold", recCls:"hold",
+    notes:"Income compensates for price weakness; ECB rate path is the swing factor. JPM target €32.70.",
+    catalyst:"ECB June meeting; H1 results late Aug.",
+    pnlEUR:(28.50-30.10)*350},
+  {sym:"BBVA", name:"Banco Bilbao Vizcaya Argentaria", grp:"EU Banks", ccy:"EUR", sh:700, cost:19.62, last:18.78, rsi:45, macd:"Slightly negative", div:5.5, rec:"Hold into earnings", recCls:"hold",
+    notes:"Q1 earnings TOMORROW (Apr 30). Watch Turkish NII, Spanish lending, CET1 ≥13%.",
+    catalyst:"Q1 — Apr 30, 2026.",
+    pnlEUR:(18.78-19.62)*700},
+  {sym:"SAN", name:"Banco Santander SA", grp:"EU Banks", ccy:"EUR", sh:1200, cost:10.76, last:10.55, rsi:55, macd:"Turning positive", div:5.2, rec:"Hold / Add on dip <€10.40", recCls:"add",
+    notes:"Q1 ALREADY REPORTED: underlying profit €3.56B (+12%), revenue €15.1B (+4%), efficiency ratio 42.8%, CET1 14.4%. €1.9B Polish disposal gain inside attributable €5.5B.",
+    catalyst:"Q2 — late July.",
+    pnlEUR:(10.55-10.76)*1200},
+  {sym:"INGA", name:"ING Groep NV", grp:"EU Banks", ccy:"EUR", sh:300, cost:24.50, last:24.10, rsi:50, macd:"Flat", div:6.0, rec:"Hold", recCls:"hold",
+    notes:"Capital-return programme is the structural reason to own. No Q1 results scheduled this week.",
+    catalyst:"Q1 — early May.",
+    pnlEUR:(24.10-24.50)*300},
+  {sym:"UNI", name:"Unicaja Banco SA", grp:"EU Banks", ccy:"EUR", sh:4000, cost:2.85, last:2.85, rsi:52, macd:"Quiet uptrend", div:3.8, rec:"Hold", recCls:"hold",
+    notes:"Dividend ex-date Apr 21 captured: €428 cash. Q1 results May 4.",
+    catalyst:"Q1 — May 4, 2026.",
+    pnlEUR:0},
+
+  // Spanish market
+  {sym:"ACS", name:"ACS Actividades de Construcción", grp:"Spanish Mkt", ccy:"EUR", sh:110, cost:122.90, last:122.00, rsi:55, macd:"Positive", div:3.7, rec:"Hold", recCls:"hold",
+    notes:"Spain outperforming Europe; defence/infra capex tailwind.",
+    catalyst:"Q1 — May 7.",
+    pnlEUR:(122.00-122.90)*110},
+  {sym:"A3M", name:"Atresmedia", grp:"Spanish Mkt", ccy:"EUR", sh:2000, cost:5.13, last:5.10, rsi:48, macd:"Neutral", div:7.5, rec:"Hold/Watch", recCls:"watch",
+    notes:"Weakest conviction in cluster. Limited correlation to current macro themes.",
+    catalyst:"Q1 — late May.",
+    pnlEUR:(5.10-5.13)*2000},
+  {sym:"MAP", name:"MAPFRE SA", grp:"Spanish Mkt", ccy:"EUR", sh:3100, cost:4.26, last:4.076, rsi:40, macd:"Negative but bottoming", div:7.0, rec:"Hold into print", recCls:"hold",
+    notes:"Q1 results TODAY. Mgmt signalled positive Q1 (motor pricing + Latam recovery). 2025 net profit €1.1B (+19.6%); ROE target raised to >13% for 2026.",
+    catalyst:"Q1 — TODAY (Apr 29).",
+    pnlEUR:(4.076-4.26)*3100},
+  {sym:"IBE", name:"Iberdrola SA", grp:"Spanish Mkt", ccy:"EUR", sh:150, cost:19.87, last:19.93, rsi:55, macd:"Positive", div:4.7, rec:"Hold into print", recCls:"hold",
+    notes:"Q1 results TODAY 09:30 CET. Consensus EPS $0.2838, revenue $13.39B. 2026 guidance >€6.6B adj net.",
+    catalyst:"Q1 — TODAY (Apr 29).",
+    pnlEUR:(19.93-19.87)*150},
+  {sym:"LOG", name:"Logista Integral SA", grp:"Spanish Mkt", ccy:"EUR", sh:100, cost:32.70, last:32.10, rsi:50, macd:"Flat", div:7.5, rec:"Hold", recCls:"hold",
+    notes:"Stable income compounder; no new news.",
+    catalyst:"H1 — May 7.",
+    pnlEUR:(32.10-32.70)*100},
+  {sym:"NTH", name:"Naturhouse Health SA", grp:"Spanish Mkt", ccy:"EUR", sh:2350, cost:2.53, last:2.50, rsi:48, macd:"Quiet", div:10.0, rec:"Hold", recCls:"hold",
+    notes:"Defensive small-cap; watch dividend sustainability.",
+    catalyst:"Q1 — May 13.",
+    pnlEUR:(2.50-2.53)*2350},
+
+  // Spanish RE
+  {sym:"MVC", name:"Metrovacesa SA", grp:"Spanish RE", ccy:"EUR", sh:958, cost:11.92, last:11.70, rsi:50, macd:"Neutral", div:11.0, rec:"Hold", recCls:"hold",
+    notes:"Madrid rezoning supportive of volumes (could compress margins near-term).",
+    catalyst:"Q1 — May 14.",
+    pnlEUR:(11.70-11.92)*958},
+  {sym:"HOME", name:"Neinor Homes SA", grp:"Spanish RE", ccy:"EUR", sh:305, cost:16.90, last:17.02, rsi:52, macd:"Marginally positive", div:8.0, rec:"Hold / Add on weakness", recCls:"add",
+    notes:"Reiterated 2026–27 guidance at AGM. Consensus target €20.20 (+19% upside).",
+    catalyst:"Q1 — May 8.",
+    pnlEUR:(17.02-16.90)*305},
+
+  // US Tech
+  {sym:"MU", name:"Micron Technology Inc", grp:"US Tech", ccy:"USD", sh:70, cost:448.42, last:498.00, rsi:55, macd:"Positive but slowing", div:0.5, rec:"Hold w/ stop $480", recCls:"hold",
+    notes:"Yesterday's −4.87% on OpenAI/AI sentiment, not Micron-specific. Three buy upgrades this week ($600/$700/$1,000).",
+    catalyst:"FY Q3 — late June.",
+    pnlEUR:(498.00-448.42)*70/1.179},
+  {sym:"SNDK", name:"SanDisk Corp", grp:"US Tech", ccy:"USD", sh:27, cost:913.02, last:1030.00, rsi:60, macd:"Positive", div:0, rec:"Hold into print", recCls:"hold",
+    notes:"Q1 (FY26 Q3) earnings TOMORROW. Consensus rev $4.69B / EPS $14.45. +317% YTD. Options pricing implies ~16.6% post-print swing.",
+    catalyst:"Q3 FY26 — Apr 30.",
+    pnlEUR:(1030.00-913.02)*27/1.179},
+  {sym:"WDC", name:"Western Digital Corp", grp:"US Tech", ccy:"USD", sh:33, cost:374.11, last:391.00, rsi:52, macd:"Flat-positive", div:0.0, rec:"Hold into print", recCls:"hold",
+    notes:"Q1 earnings TOMORROW. Consensus rev $3.25B / EPS $2.40. Now debt-free; >$9B buyback runway through 2028.",
+    catalyst:"Q3 FY26 — Apr 30.",
+    pnlEUR:(391.00-374.11)*33/1.179},
+  {sym:"CLS", name:"Celestica Inc", grp:"US Tech", ccy:"USD", sh:15, cost:401.12, last:305.00, rsi:35, macd:"Turning down", div:0, rec:"Hold (oversold)", recCls:"hold",
+    notes:"Down 15.7% yesterday DESPITE beating Q1 and raising FY guidance — pure AI sentiment selloff. Wait for confirmation before adding.",
+    catalyst:"Q2 — late July.",
+    pnlEUR:(305.00-401.12)*15/1.179},
+  {sym:"CRDO", name:"Credo Technology Group", grp:"US Tech", ccy:"USD", sh:62, cost:174.53, last:165.70, rsi:40, macd:"Just turned negative", div:0, rec:"ADD 12–15 sh @ $165–$170", recCls:"add",
+    notes:"Action 1. Down 8.2% yesterday on AI sentiment, not company-specific. BNP Paribas top AI pick for 2026.",
+    catalyst:"Q4 FY26 — early June.",
+    pnlEUR:(165.70-174.53)*62/1.179},
+  {sym:"LITE", name:"Lumentum Holdings Inc", grp:"US Tech", ccy:"USD", sh:14, cost:895.11, last:791.37, rsi:48, macd:"Near zero", div:0, rec:"Hold", recCls:"hold",
+    notes:"Down 8.0% yesterday in AI selloff. JPM target $950. May-5 print: analysts expect +293% YoY EPS, +89% rev.",
+    catalyst:"Q3 FY26 — May 5.",
+    pnlEUR:(791.37-895.11)*14/1.179},
+  {sym:"ABBV", name:"AbbVie Inc", grp:"US Pharma", ccy:"USD", sh:30, cost:203.71, last:199.00, rsi:45, macd:"Mildly negative", div:3.5, rec:"Hold into print", recCls:"hold",
+    notes:"Q1 TODAY pre-market US. Zacks consensus EPS $2.69, rev $14.78B. Skyrizi $4.41B + Rinvoq $2.09B drivers; Humira biosimilar drag continues. Beat 4 of last 4 Qs.",
+    catalyst:"Q1 — TODAY.",
+    pnlEUR:(199.00-203.71)*30/1.179},
+  {sym:"TTMI", name:"TTM Technologies Inc", grp:"US Tech", ccy:"USD", sh:40, cost:125.81, last:122.00, rsi:52, macd:"Positive but decelerating", div:0, rec:"Hold into print", recCls:"hold",
+    notes:"Q1 TODAY. Guide $770–810M rev / EPS $0.64–$0.70. Defence + AI/datacenter = ~80% of sales; FY 2025 closed with $1.6B A&D backlog and 1.46 book-to-bill.",
+    catalyst:"Q1 — TODAY.",
+    pnlEUR:(122.00-125.81)*40/1.179},
+
+  // EU Industrials
+  {sym:"ENR", name:"Siemens Energy AG", grp:"EU Industrial", ccy:"EUR", sh:60, cost:168.84, last:185.00, rsi:60, macd:"Positive", div:0.5, rec:"Hold; trim if >€200", recCls:"hold",
+    notes:"All-time high €191.66 hit Apr 24. Iran energy-security tailwind.",
+    catalyst:"H1 — May 14.",
+    pnlEUR:(185.00-168.84)*60},
+
+  // ETFs
+  {sym:"EQQQ", name:"Invesco EQQQ Nasdaq-100 UCITS", grp:"ETF", ccy:"EUR", sh:29, cost:550.00, last:545.00, rsi:50, macd:"Negative", div:0.5, rec:"Hold", recCls:"hold",
+    notes:"Tonight's MSFT/GOOGL/META/AMZN reports are the catalyst.",
+    catalyst:"Mag-7 prints tonight.",
+    pnlEUR:(545.00-550.00)*29},
+  {sym:"VVSM", name:"VanEck Semiconductor UCITS ETF", grp:"ETF", ccy:"EUR", sh:225, cost:69.17, last:72.00, rsi:50, macd:"Cooling", div:0.7, rec:"Hold", recCls:"hold",
+    notes:"Underlying SMH +36.5% YTD ($491.36 on Apr 28). Yesterday's chip selloff hit fund modestly.",
+    catalyst:"AI-cycle / Mag-7 prints.",
+    pnlEUR:(72.00-69.17)*225},
+  {sym:"DFNS", name:"VanEck Defense UCITS ETF", grp:"ETF", ccy:"EUR", sh:120, cost:59.21, last:61.00, rsi:55, macd:"Positive", div:0.8, rec:"Hold; add on dips to €58", recCls:"add",
+    notes:"Iran/NATO spending tailwind.",
+    catalyst:"NATO summit June 2026.",
+    pnlEUR:(61.00-59.21)*120},
+  {sym:"NUCL", name:"VanEck Uranium & Nuclear ETF", grp:"ETF", ccy:"EUR", sh:90, cost:53.48, last:54.00, rsi:50, macd:"Quiet", div:0.5, rec:"Hold", recCls:"hold",
+    notes:"Energy-security policy push supportive.",
+    catalyst:"Policy news flow.",
+    pnlEUR:(54.00-53.48)*90},
+  {sym:"QNTM", name:"VanEck Quantum Computing ETF", grp:"ETF", ccy:"EUR", sh:100, cost:23.05, last:23.00, rsi:48, macd:"Quiet", div:0, rec:"Hold (speculative)", recCls:"hold",
+    notes:"Long-duration thematic; limited near-term catalysts.",
+    catalyst:"—",
+    pnlEUR:(23.00-23.05)*100},
+  {sym:"TDIV", name:"VanEck MS Developed Markets Div ETF", grp:"ETF", ccy:"EUR", sh:800, cost:52.46, last:52.60, rsi:50, macd:"Positive", div:3.5, rec:"Hold", recCls:"hold",
+    notes:"Core income/diversification position.",
+    catalyst:"Quarterly distribution.",
+    pnlEUR:(52.60-52.46)*800},
+  {sym:"INRG", name:"iShares Global Clean Energy Transition", grp:"ETF", ccy:"EUR", sh:500, cost:9.60, last:9.55, rsi:48, macd:"Negative", div:1.7, rec:"Hold", recCls:"hold",
+    notes:"Iberdrola is the largest holding; same Q1 catalyst today.",
+    catalyst:"IBE Q1 today; energy transition flows.",
+    pnlEUR:(9.55-9.60)*500},
+];
+
+/* ---------------- TAB SWITCHER ---------------- */
+const tabs = document.querySelectorAll('.tab');
+const panes = document.querySelectorAll('.tab-pane');
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  const which = t.dataset.tab;
+  panes.forEach(p => { p.hidden = (p.dataset.pane !== which); p.classList.toggle('active', p.dataset.pane === which); });
+}));
+
+/* ---------------- PORTFOLIO TABLE ---------------- */
+function fmtPnL(v){
+  const sign = v >= 0 ? '+' : '−';
+  const abs = Math.abs(v).toLocaleString('en-US',{maximumFractionDigits:0});
+  return `<span class="${v>=0?'pos':'neg'}">${sign}€${abs}</span>`;
+}
+function fmtCcy(v, ccy){
+  return `${ccy==='USD'?'$':'€'}${v.toLocaleString('en-US',{maximumFractionDigits:2})}`;
+}
+const tbody = document.querySelector('#ptable tbody');
+positions.forEach(p => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${p.sym}</b><br><span class="small">${p.grp}</span></td>
+    <td>${fmtCcy(p.cost,p.ccy)}<br><span class="small">${p.sh} sh</span></td>
+    <td>${fmtCcy(p.last,p.ccy)}</td>
+    <td>${fmtPnL(p.pnlEUR)}</td>
+    <td>${p.rsi}<div class="bar rsi"><span style="width:${Math.min(100,p.rsi)}%"></span></div></td>
+    <td><span class="small">${p.macd}</span></td>
+    <td>${p.div?p.div.toFixed(1)+'%':'—'}</td>
+    <td><span class="pill ${p.recCls}">${p.rec}</span></td>`;
+  tbody.appendChild(tr);
+});
+
+/* ---------------- DEEP-DIVE ---------------- */
+const sel = document.getElementById('diveSel');
+positions.forEach(p => {
+  const o = document.createElement('option');
+  o.value = p.sym; o.textContent = `${p.sym} — ${p.name}`;
+  sel.appendChild(o);
+});
+function rsiBucket(r){
+  if (r >= 70) return ['Overbought','neg'];
+  if (r >= 60) return ['Strong / extended','warn'];
+  if (r >= 45) return ['Neutral','mut'];
+  if (r >= 30) return ['Weak / cooling','warn'];
+  return ['Oversold','pos'];
+}
+function buildDive(sym){
+  const p = positions.find(x => x.sym === sym);
+  if (!p) return;
+  const pnlPct = ((p.last - p.cost) / p.cost) * 100;
+  const [rsiLabel, rsiCls] = rsiBucket(p.rsi);
+  const body = document.getElementById('diveBody');
+  body.innerHTML = `
+    <div class="panel">
+      <div class="row">
+        <div>
+          <h3 style="margin:0">${p.sym} — ${p.name}</h3>
+          <div class="small">${p.grp} · ${p.ccy}</div>
+        </div>
+        <span class="pill ${p.recCls}" style="align-self:center">${p.rec}</span>
+      </div>
+    </div>
+
+    <div class="grid cols-3">
+      <div class="panel">
+        <h3>Position</h3>
+        <div class="stat-row"><span class="k">Shares</span><span class="pn">${p.sh.toLocaleString()}</span></div>
+        <div class="stat-row"><span class="k">Cost basis</span><span class="pn">${fmtCcy(p.cost,p.ccy)}</span></div>
+        <div class="stat-row"><span class="k">Last</span><span class="pn">${fmtCcy(p.last,p.ccy)}</span></div>
+        <div class="stat-row"><span class="k">% from cost</span><span class="pn ${pnlPct>=0?'pos':'neg'}">${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%</span></div>
+        <div class="stat-row"><span class="k">P&amp;L (EUR est.)</span><span class="pn">${fmtPnL(p.pnlEUR)}</span></div>
+        <div class="stat-row"><span class="k">Local value</span><span class="pn">${fmtCcy(p.sh*p.last,p.ccy)}</span></div>
+        <div class="stat-row"><span class="k">Dividend yield</span><span class="pn">${p.div?p.div.toFixed(1)+'%':'—'}</span></div>
+      </div>
+
+      <div class="panel">
+        <h3>Indicators</h3>
+        <div class="ltabel">RSI(14)</div>
+        <div class="row"><b>${p.rsi}</b> <span class="small ${rsiCls}">${rsiLabel}</span></div>
+        <div class="bar rsi"><span style="width:${Math.min(100,p.rsi)}%"></span></div>
+        <p class="small" style="margin-top:10px"><b>MACD:</b> ${p.macd}</p>
+        <p class="small" style="margin:0">RSI &gt; 70 = overbought (consider trim); &lt; 30 = oversold (look for accumulation). MACD turns above 0 = momentum positive.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Catalysts</h3>
+        <p style="margin:6px 0">${p.catalyst}</p>
+        <h3 style="margin-top:12px">Recommendation</h3>
+        <p style="margin:6px 0"><span class="pill ${p.recCls}">${p.rec}</span></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Notes &amp; thesis</h3>
+      <p>${p.notes}</p>
+    </div>
+  `;
+}
+sel.addEventListener('change', () => buildDive(sel.value));
+sel.value = "MU";
+buildDive("MU");
+</script>
+</body>
+</html>
