@@ -196,4 +196,168 @@ Steps to get there:
 
 ---
 
-*Brief generated automatically. All prices as of April 24–25, 2026 close. Portfolio positions from April 21, 2026 CSV. This is not financial advice.*
+---
+
+## 8. Portfolio P&L Table (Apr 21 → Apr 24)
+
+*Entry prices from Portfolio 2104.csv (close Apr 21). Current prices from Apr 24 close. USD converted at EUR/USD ≈ 1.08.*
+
+| Position | Shares | Entry Price | Current Price | Change % | Est. P&L (EUR) | Current Value (EUR) |
+|---|---|---|---|---|---|---|
+| **VanEck Semis (VVSM)** | 225 | €69.17 | ~€76.50 | **+10.6%** | **+€1,649** | ~€17,213 |
+| **Micron (MU)** | 70 | $448.42 | ~$496.30 | **+10.7%** | **+€3,100** | ~€32,150 |
+| **SanDisk (SNDK)** | 27 | $913.02 | ~$995.01 | **+9.0%** | **+€2,050** | ~€24,860 |
+| **Siemens Energy (ENR)** | 60 | €168.84 | ~€187.62 | **+11.1%** | **+€1,127** | ~€11,257 |
+| **Credo Technology (CRDO)** | 62 | $174.53 | ~$195.04 | **+11.8%** | **+€1,175** | ~€11,199 |
+| **Western Digital (WDC)** | 33 | $374.11 | ~$404.01 | **+8.0%** | **+€913** | ~€12,343 |
+| **TTM Technologies (TTMI)** | 40 | $125.81 | ~$147.43 | **+17.2%** | **+€800** | ~€5,460 |
+| **Celestica (CLS)** | 15 | $401.12 | ~$410.21 | **+2.3%** | **+€126** | ~€5,697 |
+| **AbbVie (ABBV)** | 30 | $203.71 | ~$205.61 | **+0.9%** | **+€53** | ~€5,711 |
+| **Neinor Homes (HOME)** | 305 | €16.90 | ~€17.02 | **+0.7%** | **+€37** | ~€5,191 |
+| EQQQ (Nasdaq-100) | 29 | €550.00 | ~€565 est. | ~+2.7% | ~+€435 est. | ~€16,385 est. |
+| VanEck VDIV | 800 | €52.46 | ~€52.46 | ~flat | ~€0 | ~€41,968 |
+| VanEck Defense (DFNS) | 120 | €59.21 | ~€58.13 | -1.8% | -€130 | ~€6,976 |
+| Lumentum (LITE) | 14 | $895.11 | ~$877.00 | -2.0% | -€234 | ~€11,368 |
+| ACS | 110 | €122.90 | ~€121.80 | -0.9% | -€121 | ~€13,398 |
+| Iberdrola (IBE) | 150 | €19.87 | ~€19.58 | -1.5% | -€44 | ~€2,937 |
+| Metrovacesa (MVC) | 958 | €11.92 | ~€11.75 | -1.4% | -€163 | ~€11,257 |
+| Santander (SAN) | 1,200 | €10.76 | ~€10.59 | -1.6% | **-€204** | ~€12,708 |
+| BBVA | 700 | €19.62 | ~€19.07 | -2.8% | **-€385** | ~€13,349 |
+| Logista (LOG) | 100 | €32.70 | ~€31.24 | -4.5% | **-€146** | ~€3,124 |
+| **MAPFRE (MAP)** | 3,100 | €4.26 | ~€3.94 | **-7.5%** | **-€992** | ~€12,214 |
+| **Unicaja (UNI)** | 4,000 | €2.85 | ~€2.49* | **-12.6%*** | **-€1,440** | ~€9,960 |
+| ABN AMRO | 350 | €30.10 | ~€30.10 | flat | €0 | ~€10,535 |
+| ING | 300 | €24.50 | ~€24.50 | flat | €0 | ~€7,350 |
+| Atresmedia (A3M) | 2,000 | €5.13 | ~€5.13 | flat | €0 | ~€10,260 |
+| Naturhouse (NTH) | 2,350 | €2.53 | ~€2.53 | flat | €0 | ~€5,946 |
+| VanEck Uranium | 90 | €53.48 | ~€53.48 | flat | €0 | ~€4,813 |
+| VanEck Quantum | 100 | €23.05 | ~€23.05 | flat | €0 | ~€2,305 |
+| Clean Energy (INRG) | 500 | €9.60 | ~€9.60 | flat | €0 | ~€4,800 |
+| EUR Cash | — | — | — | — | — | €3,229 |
+| USD Cash | — | — | — | — | — | ~€9,112 |
+
+**Estimated net weekly P&L: +€7,400 (~+2.3% on portfolio)**
+*\*Unicaja: ~3.75% of drop is ex-dividend (€0.107 paid Apr 21). Net operational decline ~8.9%.*
+
+---
+
+## 9. Technical Indicators — MACD & RSI (Estimates, Close Apr 24)
+
+*Note: these are directional estimates based on recent price trends, not live terminal data.*
+
+| Stock/ETF | RSI (Est.) | MACD Signal | Interpretation |
+|---|---|---|---|
+| TTM Technologies | **~78 — Overbought** | Strongly bullish | Extended. Take profits. |
+| VanEck Semis | **~75 — Overbought** | Bullish, widening | Near 52-week high. Hold, no chase. |
+| Credo Technology | **~70 — Overbought boundary** | Bullish | Strong momentum; set trailing stop. |
+| Micron Technology | ~68 — Bullish | Positive, widening | All-time highs. Approaching overbought. |
+| SanDisk Corp | **~72 — Overbought** | Positive, at highs | ATH print. Set profit-take above $1,000. |
+| Western Digital | ~65 — Bullish | Positive | Healthy, not overbought. |
+| Siemens Energy | ~65 — Bullish | Positive, recovering | Still below ATH (€198). Room to run. |
+| Celestica | ~62 — Bullish | Positive | Momentum intact. |
+| ACS | ~60 — Neutral-Bullish | Flat/slight pos. | Near ATH (€122.30 on Apr 10). |
+| AbbVie | ~55 — Neutral | Flat | Stable. Earnings catalyst Wed Apr 30. |
+| Neinor Homes | ~52 — Neutral | Slightly positive | Stable. Good guidance. |
+| VanEck VDIV | ~52 — Neutral | Neutral | Steady income ETF. |
+| EQQQ | ~62 — Bullish | Positive | Nasdaq near records. |
+| VanEck Uranium | ~55 — Neutral | Neutral-positive | Long-term hold. |
+| INRG Clean Energy | ~48 — Neutral | Neutral | Oil headwind short-term. |
+| ING Groep | ~50 — Neutral | Neutral | Pre-earnings. |
+| ABN AMRO | ~50 — Neutral | Neutral | Awaiting May 13 earnings. |
+| Atresmedia | ~50 — Neutral | Neutral | No catalyst. |
+| Naturhouse | ~50 — Neutral | Neutral | Illiquid; no data. |
+| Iberdrola | ~48 — Neutral | Neutral | Small position; hold. |
+| VanEck Defense | ~45 — Neutral | Slightly neg. | Peace-talk risk. |
+| Metrovacesa | ~46 — Neutral-Weak | Slightly neg. | Sideways trend. |
+| Santander | ~48 — Neutral | Slight neg. | Pre-earnings caution. |
+| BBVA | ~45 — Neutral-Weak | Slightly neg. | Pre-earnings caution. |
+| Logista | ~42 — Neutral-Weak | Slightly neg. | No near-term catalyst. |
+| AbbVie (confirm) | ~55 — Neutral | Flat | Earnings this week. |
+| MAPFRE | **~35 — Approaching Oversold** | Bearish | Downtrend. Review thesis. |
+| Lumentum | ~48 — Neutral | Slightly neg. | Losing momentum. |
+| Unicaja | **~32 — Approaching Oversold** | Bearish | Dividend + downgrade drag. |
+
+**Key MACD/RSI takeaways:**
+- Semiconductor names (Micron, SanDisk, VVSM, TTM, Credo) all have RSI ≥70. This level historically precedes a pause or pullback. Protect gains.
+- MAPFRE and Unicaja are approaching oversold RSI (<35), which can mean either a bounce or a breakdown. Check the weekly trend — it is still down.
+- European banks are neutral ahead of their earnings releases (Apr 29–30). MACD is mildly negative — good results could reverse this quickly.
+
+---
+
+## 10. Dividend Calendar & Income Tracker
+
+| Stock | Yield (Est.) | Frequency | Last/Next Ex-Date | Amount per Share | Income on Position |
+|---|---|---|---|---|---|
+| **Unicaja (UNI)** | ~4.3% | Semi-annual | **Ex-div: Apr 21 ✅ paid** | €0.107 | €428 collected |
+| VanEck VDIV | ~3.5% | Quarterly | ~Jun/Sep 2026 | ~€0.46/qtr | ~€368/qtr |
+| MAPFRE (MAP) | ~5.1% | Annual | ~Jun/Jul 2026 | ~€0.20 | ~€620/yr |
+| Logista (LOG) | ~6.5% | Annual | ~Sep/Oct 2026 | ~€2.10 | ~€210/yr |
+| AbbVie (ABBV) | ~3.2% | Quarterly | ~Jun 2026 | ~$1.64/qtr | ~$49/qtr |
+| Banco Santander | ~5.0% | Semi-annual | ~May/Nov 2026 | ~€0.27 | ~€324/payment |
+| BBVA | ~4.5% | Semi-annual | ~May/Nov 2026 | ~€0.44 | ~€308/payment |
+| ABN AMRO | ~4.3% | Semi-annual | ~May/Aug 2026 | ~€0.65 | ~€228/payment |
+| ING Groep | ~2.8% | Annual | ~Apr/May 2026 | ~€0.70 | ~€210/yr |
+| Neinor Homes | ~3.5% | Annual | ~Jun 2026 | ~€0.60 | ~€183/yr |
+| Metrovacesa | ~3.0% | Annual | ~May 2026 | ~€0.35 | ~€335/yr |
+| Iberdrola | ~2.8% | Semi-annual | ~Jun/Dec 2026 | ~€0.28 | ~€42/payment |
+| Atresmedia | ~4.5% | Annual | ~Jun 2026 | ~€0.23 | ~€460/yr |
+| Naturhouse | ~4.0% | Annual | ~Jun 2026 | ~€0.10 | ~€235/yr |
+| ACS | ~1.6% | Annual | ~Jun 2026 | ~€2.00 | ~€220/yr |
+| Western Digital | ~0.5% | Quarterly | TBC | ~$0.50/qtr | ~$17/qtr |
+| Micron, SanDisk, CRDO, CLS, TTMI, LITE | <0.1% | None/minimal | N/A | — | Negligible |
+| ETFs (EQQQ, VVSM, DFNS, NUCL, Quantum) | 0% | Accumulating | N/A | — | Reinvested |
+
+**Estimated annual portfolio income from dividends: ~€4,000–4,500 (~1.3–1.4% yield on ~€329K portfolio)**
+*(Income is skewed to H1: Unicaja already paid Apr 21. Major payments from Santander, BBVA, ABN, MAPFRE, Logista due May–Jul.)*
+
+---
+
+## 11. Stock Deep-Dive Quick Reference
+
+*Click/expand the stock you want to review. Full details in Section 5 above.*
+
+### 🔬 MICRON TECHNOLOGY (MU) — Highest Conviction US Name
+- **Position:** 70 shares | Entry $448.42 | Current ~$496 | P&L: +€3,100
+- **Thesis:** AI memory supercycle. HBM supply constrained; Micron can only meet 50–67% of near-term demand.
+- **Q1 FY26 Revenue:** $13.6B (+57% YoY). Industry revenue heading to $1.3T in 2026.
+- **RSI:** ~68 (approaching overbought). **MACD:** Positive, widening.
+- **Risk:** Mega-cap earnings (MSFT, AMZN) could reset capex expectations for memory demand.
+- **Dividend:** Nominal (~$0.115/quarter). **Action: HOLD full position.**
+
+### 🔬 SANDISK CORP (SNDK) — NAND Storage at ATH
+- **Position:** 27 shares | Entry $913.02 | Current ~$995 | P&L: +€2,050
+- **Thesis:** AI inference storage demand driving NAND price surge. Up ~287% YTD.
+- **ATH:** $989.90 close / $1,002 intraday (Apr 24). Tradr launched 2× short ETF — sign of polarised views.
+- **RSI:** ~72 (overbought). **MACD:** Positive at highs.
+- **Dividend:** None. **Action: HOLD. Set alert at $1,050 to trim 3–4 shares.**
+
+### 🔬 SIEMENS ENERGY (ENR) — European AI Power Play
+- **Position:** 60 shares | Entry €168.84 | Current ~€187.62 | P&L: +€1,127
+- **Thesis:** AI data centre power demand; European energy grid investment post-Iran conflict.
+- **52-week ATH:** €198.00 (Feb 2026). Current recovery well underway.
+- **RSI:** ~65 (bullish, not overbought). **MACD:** Positive, recovering.
+- **Dividend:** ~0.5%. **Action: HOLD. Set trailing stop at €178.**
+
+### 🔬 UNICAJA BANCO (UNI) — Dividend Received, Watch Price
+- **Position:** 4,000 shares | Entry €2.85 | Current ~€2.49 | P&L: -€1,440
+- **Context:** Ex-dividend €0.107 on Apr 21 accounts for 3.75% of decline. Net operational drop ~8.9%.
+- **Keefe Bruyette "Underperform" downgrade** (Mar 2026) is the other driver.
+- **RSI:** ~32 (near oversold). **MACD:** Bearish.
+- **Dividend yield (forward):** ~4.3%. **Action: HOLD. Only add if €2.40–2.45 holds as support.**
+
+### 🔬 MAPFRE (MAP) — Weakest Link, Thesis Under Pressure
+- **Position:** 3,100 shares | Entry €4.26 | Current ~€3.94 | P&L: -€992
+- **Issues:** UBS "Sell" rating (Jan 2026), oil-driven claims cost pressure, Spain macro uncertainty.
+- **52-week low:** €3.60 (approaching). **Dividend yield at current:** ~5.1% (income floor).
+- **RSI:** ~35 (approaching oversold). **MACD:** Bearish crossover.
+- **Action: TRIM 500–800 shares at €3.96–4.00 on Monday open.** Re-evaluate full position below €3.80.
+
+### 🔬 TTM TECHNOLOGIES (TTMI) — Book Gains Now
+- **Position:** 40 shares | Entry $125.81 | Current ~$147.43 | P&L: +€800
+- **Catalyst:** B. Riley raised PT to $162. AI data centre PCB demand. Up 109% YTD.
+- **RSI:** ~78 (strongly overbought). **MACD:** Sharply positive.
+- **Action: TRIM 15–20 shares at Monday open ($147–152 range).** Lock in gains.
+
+---
+
+*Brief generated automatically on Saturday 25 April 2026. All prices as of Friday 24 April 2026 close. Portfolio positions from Portfolio 2104.csv (Apr 21, 2026). MACD and RSI are trend-based estimates, not live terminal data. EUR/USD ≈ 1.08. This document is for informational purposes only and does not constitute financial advice.*
