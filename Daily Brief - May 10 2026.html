@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Brief — 10 May 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #252836;
+    --border: #2e3147; --text: #e2e8f0; --muted: #8892a4;
+    --green: #22c55e; --red: #ef4444; --yellow: #f59e0b;
+    --blue: #3b82f6; --purple: #a855f7; --orange: #f97316;
+    --accent: #6366f1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; }
+  header { background: linear-gradient(135deg, #1a1d27, #252836); padding: 20px 24px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 22px; font-weight: 700; color: var(--text); }
+  header p { color: var(--muted); margin-top: 4px; font-size: 12px; }
+  .stats-bar { display: flex; gap: 16px; padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 16px; font-weight: 700; }
+  .pos { color: var(--green); } .neg { color: var(--red); } .neu { color: var(--text); }
+  nav { display: flex; gap: 0; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  nav button { padding: 12px 20px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+  nav button:hover { color: var(--text); }
+  .tab { display: none; padding: 24px; }
+  .tab.active { display: block; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .card h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid #1e2133; font-size: 13px; }
+  tr:hover td { background: var(--surface2); }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge-yellow { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .badge-gray { background: rgba(136,146,164,0.15); color: var(--muted); }
+  select { background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
+  .detail-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .detail-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin: 16px 0; }
+  .detail-item { background: var(--surface2); border-radius: 8px; padding: 12px; }
+  .detail-item .label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .detail-item .value { font-size: 18px; font-weight: 700; }
+  .progress-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+  .progress-fill { height: 100%; border-radius: 3px; }
+  .recommendation { padding: 12px 16px; border-radius: 8px; margin-top: 12px; font-size: 13px; }
+  .rec-buy { background: rgba(34,197,94,0.1); border-left: 3px solid var(--green); }
+  .rec-hold { background: rgba(245,158,11,0.1); border-left: 3px solid var(--yellow); }
+  .rec-trim { background: rgba(239,68,68,0.1); border-left: 3px solid var(--red); }
+  .scenario-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .scenario-row:last-child { border-bottom: none; }
+  .scenario-prob { font-size: 22px; font-weight: 700; min-width: 55px; }
+  .scenario-bar { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .scenario-fill { height: 100%; border-radius: 4px; }
+  .watch-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 12px; }
+  .watch-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .watch-name { font-size: 16px; font-weight: 700; }
+  .watch-ticker { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .watch-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin: 12px 0; }
+  .watch-metric { background: var(--surface2); border-radius: 6px; padding: 10px; }
+  .watch-metric .wm-label { font-size: 10px; color: var(--muted); }
+  .watch-metric .wm-value { font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .chart-container { height: 200px; position: relative; }
+  .entry-zone { background: rgba(34,197,94,0.08); border: 1px dashed rgba(34,197,94,0.3); border-radius: 6px; padding: 10px 14px; margin-top: 10px; font-size: 12px; }
+  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .alert-box { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; }
+  .action-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; display: flex; gap: 16px; align-items: flex-start; }
+  .action-num { background: var(--accent); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .action-content h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .action-content p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .rsi-indicator { display: flex; align-items: center; gap: 8px; }
+  .rsi-bar { flex: 1; height: 10px; background: linear-gradient(to right, var(--blue), var(--green), var(--yellow), var(--red)); border-radius: 5px; position: relative; }
+  .rsi-marker { position: absolute; top: -3px; width: 16px; height: 16px; background: white; border-radius: 50%; transform: translateX(-50%); border: 2px solid var(--bg); }
+  @media (max-width: 768px) {
+    .grid2, .grid3, .detail-grid, .watch-metrics { grid-template-columns: 1fr; }
+    .stats-bar { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 Daily Investment Brief</h1>
+  <p>Sunday, 10 May 2026 &nbsp;|&nbsp; EUR/USD ≈ 1.18 &nbsp;|&nbsp; Automated analysis &nbsp;|&nbsp; Not financial advice</p>
+</header>
+
+<div class="stats-bar">
+  <div class="stat"><span class="stat-label">S&P 500</span><span class="stat-value neu">7,399 <small style="font-size:11px;color:var(--green)">+0.8%</small></span></div>
+  <div class="stat"><span class="stat-label">Nasdaq</span><span class="stat-value neu">26,247 <small style="font-size:11px;color:var(--green)">+1.7%</small></span></div>
+  <div class="stat"><span class="stat-label">VIX</span><span class="stat-value neu">17.37</span></div>
+  <div class="stat"><span class="stat-label">Gold</span><span class="stat-value pos">$4,714</span></div>
+  <div class="stat"><span class="stat-label">Brent Oil</span><span class="stat-value neu">~$103/bbl</span></div>
+  <div class="stat"><span class="stat-label">Est. Portfolio P&L</span><span class="stat-value pos">+€43,920 (+14.6%)</span></div>
+  <div class="stat"><span class="stat-label">Cash Available</span><span class="stat-value neu">€12,341</span></div>
+</div>
+
+<nav>
+  <button class="active" onclick="showTab('overview')">📈 Overview</button>
+  <button onclick="showTab('portfolio')">💼 Portfolio P&L</button>
+  <button onclick="showTab('detail')">🔍 Stock Detail</button>
+  <button onclick="showTab('watchlist')">👁 Watchlist</button>
+  <button onclick="showTab('scenarios')">🌐 Scenarios</button>
+</nav>
+
+<!-- OVERVIEW TAB -->
+<div id="tab-overview" class="tab active">
+  <div class="section-title">🔥 What Changed Since Yesterday</div>
+
+  <div class="alert-box">⚠️ <strong>Siemens Energy Q2 earnings Monday May 12</strong> — Hold for results before adding. Consensus divided between €100 (Barclays) and €200 (JPMorgan) targets.</div>
+
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="card">
+      <h3>Development 1</h3>
+      <p style="color:var(--green);font-weight:700;margin-bottom:6px">Memory Supercycle Accelerates</p>
+      <p style="color:var(--muted);line-height:1.6">Micron surged +15.5% Friday alone, past $700B market cap. SanDisk hit ATH of $1,562. WDC at $480 near its own ATH. AI-driven HBM/NAND demand shows no signs of slowing. Your MU+SNDK+WDC positions are up ~€36,000 combined.</p>
+    </div>
+    <div class="card">
+      <h3>Development 2</h3>
+      <p style="color:var(--yellow);font-weight:700;margin-bottom:6px">Hormuz Clashes Despite Ceasefire</p>
+      <p style="color:var(--muted);line-height:1.6">US & Iran traded fire May 7-8. Ceasefire holds per Trump ("just a love tap"). Strait still largely closed; 14M bpd disrupted. Oil fell from $116 (May 5) to ~$100-106. Peace negotiations via Pakistan continue — optimism rising (30% deal probability).</p>
+    </div>
+    <div class="card">
+      <h3>Development 3</h3>
+      <p style="color:var(--blue);font-weight:700;margin-bottom:6px">Equities Hit New Highs</p>
+      <p style="color:var(--muted);line-height:1.6">S&P 500 at 7,399, Nasdaq at 26,247 — longest weekly winning streak since 2024. Payrolls +115K beat. No Fed rate cuts priced for 2026; options lean toward 2027 tightening. Your EQQQ (+9.8%) and VanEck Semi ETF (est. +25%) are performing strongly.</p>
+    </div>
+  </div>
+
+  <div class="section-title">⚡ Three Actions for Today</div>
+
+  <div class="action-card">
+    <div class="action-num">1</div>
+    <div class="action-content">
+      <h4>TRIM Micron (MU): Sell 15-20 of 70 shares at ~$757 on Monday open</h4>
+      <p>MU is up 69% from cost basis, RSI estimated >75 (overbought), market cap >$700B. Lock in $9K-$12K USD in gains. Hold remaining 50 shares for continued AI memory supercycle. Redeploy proceeds to cash or Celestica dip.</p>
+    </div>
+  </div>
+  <div class="action-card">
+    <div class="action-num">2</div>
+    <div class="action-content">
+      <h4>Set Trailing Stop on SanDisk (SNDK) at $1,350</h4>
+      <p>+71% gain from cost of $913. Mizuho targets $1,625 but insider selling of $39M is a red flag. Protect gains with mental trailing stop 13% below current. If it breaks $1,350 with negative catalyst, trim 30-50%.</p>
+    </div>
+  </div>
+  <div class="action-card">
+    <div class="action-num">3</div>
+    <div class="action-content">
+      <h4>Watch ATI Inc. (watchlist) for entry at $145-150 pullback</h4>
+      <p>Aerospace/defense materials play running to $165. KeyBanc target $175 (Overweight). A 10-12% pullback to $145-150 would be a clean entry point. Aligns with existing VanEck Defense ETF thesis. Do NOT chase at $165.</p>
+    </div>
+  </div>
+
+  <div class="section-title">📅 Key Dates This Week</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Date</th><th>Event</th><th>Relevance</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Mon May 11</strong></td><td>🇺🇸 US CPI Data</td><td><span class="badge badge-red">HIGH IMPACT</span> Inflation data — could reprice rate expectations</td></tr>
+        <tr><td><strong>Mon May 12</strong></td><td>Siemens Energy Q2 Earnings</td><td><span class="badge badge-yellow">PORTFOLIO</span> Direct position — hold for results</td></tr>
+        <tr><td><strong>Wed May 13</strong></td><td>🇺🇸 US PPI Data</td><td><span class="badge badge-yellow">MEDIUM</span> Producer prices, secondary inflation read</td></tr>
+        <tr><td><strong>Thu May 14</strong></td><td>US Jobless Claims</td><td><span class="badge badge-blue">MONITOR</span> Labour market health</td></tr>
+        <tr><td><strong>Fri May 15</strong></td><td>AbbVie Dividend Pay ($1.73 × 30 = $51.90)</td><td><span class="badge badge-green">INCOME</span> Cash credited to account</td></tr>
+        <tr><td><strong>Mon May 18</strong></td><td>Lumentum joins Nasdaq-100</td><td><span class="badge badge-green">CATALYST</span> Index buying could boost LITE</td></tr>
+        <tr><td><strong>Ongoing</strong></td><td>Iran-US Peace Negotiations (Pakistan)</td><td><span class="badge badge-yellow">MACRO</span> Watch daily for ceasefire updates</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PORTFOLIO P&L TAB -->
+<div id="tab-portfolio" class="tab">
+  <div class="section-title">💼 Portfolio P&L — All Positions</div>
+  <p style="color:var(--muted);margin-bottom:16px;font-size:12px">Cost basis from portfolio CSV dated ~21 April 2026. Current prices from market data 9-10 May 2026. EUR/USD = 1.18.</p>
+
+  <div style="margin-bottom:20px">
+    <div class="card">
+      <h3>Portfolio Summary by Segment</h3>
+      <canvas id="segmentChart" height="80"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Shares</th>
+          <th>Cost Price</th>
+          <th>Current Price</th>
+          <th>P&L</th>
+          <th>% Change</th>
+          <th>RSI (est.)</th>
+          <th>MACD</th>
+          <th>Div. Yield</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="portfolioTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- STOCK DETAIL TAB -->
+<div id="tab-detail" class="tab">
+  <div class="section-title">🔍 Dive Into a Position</div>
+
+  <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+    <label style="color:var(--muted);font-size:13px">Select Position:</label>
+    <select id="stockSelect" onchange="updateDetail()"></select>
+  </div>
+
+  <div id="detailPanel" class="detail-panel"></div>
+</div>
+
+<!-- WATCHLIST TAB -->
+<div id="tab-watchlist" class="tab">
+  <div class="section-title">👁 Watchlist — Buy on Pullback Analysis</div>
+  <p style="color:var(--muted);margin-bottom:20px;font-size:12px">Stocks identified as interesting. Detailed entry level guidance based on current technicals and fundamentals.</p>
+  <div id="watchlistContainer"></div>
+</div>
+
+<!-- SCENARIOS TAB -->
+<div id="tab-scenarios" class="tab">
+  <div class="section-title">🌐 Geopolitical Scenario Probabilities — Iran/Hormuz</div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div id="scenariosContainer"></div>
+  </div>
+
+  <div class="section-title">📊 Market Snapshot</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Global Indices</h3>
+      <table>
+        <thead><tr><th>Index</th><th>Level</th><th>Change</th><th>Signal</th></tr></thead>
+        <tbody>
+          <tr><td>S&P 500</td><td>7,399</td><td class="pos">+0.8%</td><td><span class="badge badge-green">ATH</span></td></tr>
+          <tr><td>Nasdaq</td><td>26,247</td><td class="pos">+1.7%</td><td><span class="badge badge-green">ATH</span></td></tr>
+          <tr><td>Dow Jones</td><td>49,609</td><td class="pos">+0.02%</td><td><span class="badge badge-green">STABLE</span></td></tr>
+          <tr><td>VIX</td><td>17.37</td><td class="neu">↑ slightly</td><td><span class="badge badge-yellow">MODERATE</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Commodities & Rates</h3>
+      <table>
+        <thead><tr><th>Asset</th><th>Price</th><th>Signal</th></tr></thead>
+        <tbody>
+          <tr><td>Gold (spot)</td><td>$4,714/oz</td><td><span class="badge badge-green">↑ UPTREND</span></td></tr>
+          <tr><td>IGLN ETF (London)</td><td>~91.56p</td><td><span class="badge badge-green">TRACKING</span></td></tr>
+          <tr><td>WTI Crude</td><td>~$95/bbl</td><td><span class="badge badge-yellow">VOLATILE</span></td></tr>
+          <tr><td>Brent Crude</td><td>~$100-106/bbl</td><td><span class="badge badge-yellow">EASING</span></td></tr>
+          <tr><td>EUR/USD</td><td>~1.18</td><td><span class="badge badge-gray">NEUTRAL</span></td></tr>
+          <tr><td>Fed Rate Cuts 2026</td><td>0 (priced out)</td><td><span class="badge badge-red">HAWKISH</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const EUR_USD = 1.18;
+
+const positions = [
+  { name: 'Micron Technology', ticker: 'MU', shares: 70, cost: 448.42, current: 757.35, currency: 'USD', rsi: 78, macd: 'Bullish', div: 0.1, sector: 'US Tech', action: 'TRIM', rec: 'Sell 15-20 shares to lock gains. RSI overbought. Market cap >$700B limits upside. Hold 50 for AI memory supercycle.', news: 'Blowout earnings: revenue +49% YoY. Past $700B market cap. +15.5% Friday alone. Strong AI HBM/NAND demand.', target: 820 },
+  { name: 'SanDisk Corp', ticker: 'SNDK', shares: 27, cost: 913.02, current: 1562.34, currency: 'USD', rsi: 80, macd: 'Bullish (slowing)', div: 0, sector: 'US Tech', action: 'HOLD/STOP', rec: 'Set trailing stop at $1,350. Insider selling of $39M is a warning. Mizuho target $1,625 — still upside but protect the +71% gain.', news: 'New ATH $1,562. Revenue +250% YoY, gross margin 78.4%. Mizuho raises PT to $1,625.', target: 1625 },
+  { name: 'Western Digital', ticker: 'WDC', shares: 33, cost: 374.11, current: 480.00, currency: 'USD', rsi: 72, macd: 'Bullish', div: 0, sector: 'US Tech', action: 'HOLD', rec: 'Hold. Still room to analyst avg $495-660. Benefits from same AI storage tailwind as SNDK/MU. Near ATH — use $450 as mental support.', news: 'New ATH $483.87 this week. Strong Buy from 20 analysts. Avg target $495.', target: 495 },
+  { name: 'Lumentum Holdings', ticker: 'LITE', shares: 14, cost: 895.11, current: 901.50, currency: 'USD', rsi: 65, macd: 'Bullish', div: 0, sector: 'US Tech', action: 'HOLD', rec: 'Hold. Nasdaq-100 addition on May 18 is a near-term index-buying catalyst. JPMorgan PT $1,130; BNP $1,300. Up 150% YTD.', news: 'Joining Nasdaq-100 May 18. BNP Exane raised to $1,300. AI photonics demand strong.', target: 1130 },
+  { name: 'Credo Technology', ticker: 'CRDO', shares: 62, cost: 174.53, current: 188.25, currency: 'USD', rsi: 60, macd: 'Bullish', div: 0, sector: 'US Tech', action: 'HOLD', rec: 'Hold. AI networking connectivity secular theme intact. Median analyst target $200. Strong Buy consensus. 52-week range $49-$213.', news: 'Trading $182-196 range. 18 analyst coverage, median target $200. Strong Buy.', target: 200 },
+  { name: 'Celestica Inc', ticker: 'CLS', shares: 15, cost: 401.12, current: 377.00, currency: 'USD', rsi: 50, macd: 'Neutral/Bearish', div: 0, sector: 'US Tech', action: 'HOLD/ADD', rec: 'Hold. Consider adding 5 shares below $370. Q1 beat (EPS $2.16 vs $2.07 est), revenue +53% YoY. Full-year guidance raised to $19B. Temporary weakness is an opportunity.', news: 'Q1 2026 beat. Revenue +53% YoY. FY guidance raised to $19B rev/$10.15 EPS. Analyst avg target $408.', target: 408 },
+  { name: 'AbbVie Inc', ticker: 'ABBV', shares: 30, cost: 203.71, current: 201.39, currency: 'USD', rsi: 48, macd: 'Slightly Bearish', div: 3.43, sector: 'US Healthcare', action: 'HOLD', rec: 'Hold. Dividend income ($1.73/Q × 30 = $52/quarter). Ex-div ~May 15. Humira biosimilar headwinds manageable. Wait for Q2 earnings for direction.', news: 'Quarterly dividend $1.73/share. Pay date ~May 15. 12 consecutive years of div growth. Immunology portfolio growing.', target: 225 },
+  { name: 'TTM Technologies', ticker: 'TTMI', shares: 40, cost: 125.81, current: 153.77, currency: 'USD', rsi: 68, macd: 'Bullish', div: 0, sector: 'US Tech', action: 'HOLD', rec: 'Hold. PCB demand from defense/aerospace/AI servers strong. Up +133% YTD. Board refresh announced. Room to analyst target $160-175.', news: 'Board refresh announced. YTD +133%. Mitsubishi UFJ acquired new shares. Analyst target $160-175.', target: 160 },
+  { name: 'BBVA', ticker: 'BBVA.MC', shares: 700, cost: 19.62, current: 18.24, currency: 'EUR', rsi: 42, macd: 'Bearish Crossover', div: 3.8, sector: 'European Banks', action: 'HOLD/ADD', rec: 'Hold. RSI 42 = oversold vs fundamentals. Q1 EPS beat at €0.589. Consider adding 100 shares at €17.50-18.00 for a strong average. Record profits expected 2026.', news: 'Q1 2026 EPS €0.589 (beat). Next earnings July 30. Dividend yield ~3.8%. Pulling back from 2026 highs.', target: 22 },
+  { name: 'Banco Santander', ticker: 'SAN.MC', shares: 1200, cost: 10.76, current: 10.76, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 4.5, sector: 'European Banks', action: 'HOLD', rec: 'Hold. One of Europe\'s highest quality banks. Dividend yield ~4-5%. Collect income and wait for further European banking cycle momentum.', news: 'Dividend yield ~4-5%. Largest European bank by mkt cap. Strong EM exposure (LATAM). Stable.', target: 12.50 },
+  { name: 'ABN AMRO', ticker: 'ABN.AS', shares: 350, cost: 30.10, current: 29.59, currency: 'EUR', rsi: 45, macd: 'Neutral', div: 7.5, sector: 'European Banks', action: 'HOLD', rec: 'Hold. Dividend yield ~7-8% is exceptional. Near-term underperformance vs BBVA. Hold for income. Watch Q1 results.', news: 'High dividend yield ~7-8%. Dutch bank under some pressure. Q1 results pending.', target: 33 },
+  { name: 'ING Groep', ticker: 'ING.AS', shares: 300, cost: 24.50, current: 24.50, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 5.5, sector: 'European Banks', action: 'HOLD', rec: 'Hold. Solid European bank. Dividend yield ~5-6%. Collect income. Core defensive position in the portfolio.', news: 'Dividend yield ~5-6%. Strong capital position. Digital bank expansion.', target: 27 },
+  { name: 'Unicaja Banco', ticker: 'UNI.MC', shares: 4000, cost: 2.85, current: 2.85, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 5.0, sector: 'European Banks', action: 'HOLD', rec: 'Hold. Small Spanish regional bank. High yield. Monitor for Q1 results. No immediate catalyst.', news: 'Spanish regional bank. High dividend yield. Limited growth catalysts.', target: 3.20 },
+  { name: 'ACS Construcción', ticker: 'ACS.MC', shares: 110, cost: 122.90, current: 121.80, currency: 'EUR', rsi: 55, macd: 'Neutral', div: 3.5, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Global infrastructure leader. Up 138% YoY. Near cost — no action. Dividend ~3.5%. Analyst target range €74-150.', news: 'Large construction/infra group. Up 138% past year. Strong global pipeline. Market cap €31.82B.', target: 140 },
+  { name: 'Atresmedia', ticker: 'A3M.MC', shares: 2000, cost: 5.13, current: 5.13, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 6.0, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Spanish media/TV. Defensive, high dividend yield ~6%. Collect income. No major catalyst near-term.', news: 'Spanish commercial broadcaster. Dividend focused. Stable cash flow.', target: 5.80 },
+  { name: 'Iberdrola', ticker: 'IBE.MC', shares: 150, cost: 19.87, current: 19.74, currency: 'EUR', rsi: 47, macd: 'Neutral', div: 4.0, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Small position (€2,980). Global renewable energy leader. Clean energy under pressure in high-oil environment. Dividend ~4%. Long-term hold.', news: 'Trading €19.74. Global renewables leader. Clean energy headwinds from geopolitical disruption.', target: 22 },
+  { name: 'Mapfre', ticker: 'MAP.MC', shares: 3100, cost: 4.26, current: 4.26, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 6.5, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Spanish insurance group. Dividend yield ~6-7% is excellent. Core defensive income position. No action needed.', news: 'Insurance group. High dividend yield 6-7%. Defensive income play.', target: 4.80 },
+  { name: 'Metrovacesa', ticker: 'MVC.MC', shares: 958, cost: 11.92, current: 11.98, currency: 'EUR', rsi: 52, macd: 'Neutral', div: 3.0, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Spanish real estate developer. 52-week range €8.82-€13.50. Slight gain. Target €13+. Spanish housing market tight.', news: 'Trading €11.98. 52-week range €8.82-€13.50. Spanish housing market remains tight.', target: 13.50 },
+  { name: 'Neinor Homes', ticker: 'HOME.MC', shares: 305, cost: 16.90, current: 17.02, currency: 'EUR', rsi: 53, macd: 'Neutral', div: 4.0, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Spanish homebuilder. Small gain. 52-week range €13.42-€21.00. Target €19-21. Dividend ~4%.', news: 'Trading €17.02. 52-week range €13.42-€21.00. Homebuilder benefiting from housing demand.', target: 19 },
+  { name: 'Logista', ticker: 'LOG.MC', shares: 100, cost: 32.70, current: 32.70, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 7.0, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Distribution/logistics. High dividend yield ~7%. Collect income. Small position.', news: 'Distribution group. Dividend yield ~7%. Stable cash flows.', target: 36 },
+  { name: 'Naturhouse Health', ticker: 'NTH.MC', shares: 2350, cost: 2.53, current: 2.53, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 5.0, sector: 'Spanish Equities', action: 'HOLD', rec: 'Hold. Small-cap health food retailer. Small position (€5,945). Low priority. Monitor.', news: 'Small-cap health food. Low priority. Stable.', target: 2.80 },
+  { name: 'Siemens Energy', ticker: 'ENR.DE', shares: 60, cost: 168.84, current: 178.14, currency: 'EUR', rsi: 58, macd: 'Bullish', div: 0, sector: 'Industrial', action: 'WATCH', rec: 'HOLD and watch Q2 earnings Monday May 12. Gamesa loss narrowing sharply. JPM target €200; Barclays €100 (wide divergence). Beat = add; miss = trim.', news: 'Q2 earnings May 12. Gamesa loss narrowed to -€46M from -€374M. ATH was €191.66 on April 24. Break-even target H2 2026.', target: 200 },
+  { name: 'Invesco EQQQ Nasdaq-100', ticker: 'EQQQ', shares: 29, cost: 550.00, current: 603.66, currency: 'EUR', rsi: 68, macd: 'Bullish', div: 0, sector: 'ETF', action: 'HOLD', rec: 'Hold. Core long-term Nasdaq-100 exposure. Lumentum joining index May 18. Record highs. Key tech holding.', news: 'Tracking Nasdaq-100 at record highs. Up ~9.8% from cost. Core position.', target: 660 },
+  { name: 'VanEck Semiconductor UCITS', ticker: 'VVSEMI', shares: 225, cost: 69.17, current: 89.00, currency: 'EUR', rsi: 72, macd: 'Bullish', div: 0, sector: 'ETF', action: 'HOLD', rec: 'Hold. SMH (US equivalent) up 30%+ in April. Consider trimming 25 shares above €95. Core AI/chip theme position.', news: 'SMH at $568.93. Up 30%+ in April on AI chip boom. VanEck Motley Fool article highlights 30%+ April rally.', target: 95 },
+  { name: 'VanEck Defense UCITS', ticker: 'DFNS', shares: 120, cost: 59.21, current: 62.00, currency: 'EUR', rsi: 60, macd: 'Bullish', div: 0, sector: 'ETF', action: 'HOLD', rec: 'Hold. Defense spending supercycle globally. Hormuz tensions support. Geopolitical tailwinds remain strong.', news: 'Defense ETF benefiting from global rearmament cycle and Hormuz tensions.', target: 72 },
+  { name: 'VanEck Dev. Mkts Dividend', ticker: 'VVDIV', shares: 800, cost: 52.46, current: 53.50, currency: 'EUR', rsi: 52, macd: 'Neutral', div: 4.5, sector: 'ETF', action: 'HOLD', rec: 'Hold. Largest position by value (~€42,800). Core income position. Dividend yield ~4-5%. Global diversification.', news: 'Largest position (€41,968 at cost). Dividend-focused global ETF. Collect income.', target: 57 },
+  { name: 'VanEck Uranium & Nuclear', ticker: 'NUKL', shares: 90, cost: 53.48, current: 47.79, currency: 'EUR', rsi: 38, macd: 'Bearish', div: 0, sector: 'ETF', action: 'HOLD', rec: 'Hold. Do NOT sell at -10.6% near oversold. Nuclear renaissance thesis intact long-term. NLR at $140. Wait for base formation before adding.', news: 'NLR (US) at $140.76. UCITS version ~€47.79. Uranium prices under pressure. Long-term nuclear thesis intact.', target: 65 },
+  { name: 'VanEck Quantum Computing', ticker: 'VVQTM', shares: 100, cost: 23.05, current: 23.05, currency: 'EUR', rsi: 50, macd: 'Neutral', div: 0, sector: 'ETF', action: 'HOLD', rec: 'Hold. Early-stage thematic ETF. Small position (€2,305). Speculative long-term. No action needed.', news: 'Quantum computing thematic ETF. Early stage. Small position.', target: 28 },
+  { name: 'iShares Clean Energy', ticker: 'INRG', shares: 500, cost: 9.60, current: 9.60, currency: 'EUR', rsi: 45, macd: 'Neutral', div: 0, sector: 'ETF', action: 'HOLD', rec: 'Hold. Clean energy under pressure in high-oil, high-rates environment. Small position (€4,802). Long-term energy transition play.', news: 'Clean energy ETF under pressure from oil price environment. Long-term hold.', target: 12 },
+];
+
+const watchlist = [
+  {
+    name: 'United Natural Foods',
+    ticker: 'UNFI',
+    current: 51.24,
+    week52Low: 20.78,
+    week52High: 51.74,
+    analystTarget: 44.71,
+    pe: 18,
+    div: 0,
+    rating: 'Hold',
+    rsi: 72,
+    macd: 'Overbought',
+    buyZone: [38, 42],
+    verdict: 'WAIT — Near 52-Week High',
+    verdictClass: 'badge-yellow',
+    summary: 'Q2 2026 EPS of $0.62 beat estimates of $0.51. Trading near 52-week high of $51.74. Analysts see downside — avg target $44.71 (Hold). The stock has run significantly from its $20 low. Do NOT buy at current levels. Wait for meaningful pullback.',
+    entry: 'Buy Zone: $38-$42 (pullback of ~17-26%). This would align with previous resistance turned support and offer better risk/reward.',
+    catalysts: ['Profitable grocery delivery expansion', 'Whole Foods/organic trend tailwind', 'Q3 earnings beat potential'],
+    risks: ['Near 52-week high with analyst target below current price', 'Analyst consensus is HOLD not BUY', 'High leverage from grocery sector']
+  },
+  {
+    name: 'Argan Inc',
+    ticker: 'AGX',
+    current: 682,
+    week52Low: 168.26,
+    week52High: 742.30,
+    analystTarget: 409.50,
+    pe: 69.85,
+    div: 27.6,
+    rating: 'Buy (Overvalued)',
+    rsi: 75,
+    macd: 'Overbought',
+    buyZone: [450, 520],
+    verdict: 'WAIT — Significantly Overvalued',
+    verdictClass: 'badge-red',
+    summary: 'Power plant construction company trading at 70x PE. Analyst avg target $409 is 40% BELOW current price of $682. Insiders sold $39M in last 3 months with ZERO buying. Morningstar fair value $627 (still a premium). Despite high dividend yield of 27.6% (likely unsustainable), the valuation is stretched. Potential 30-40% correction.',
+    entry: 'Buy Zone: $450-$520. This represents the analyst consensus range and aligns with more reasonable PE of ~45-50x. Extreme patience required.',
+    catalysts: ['Power infrastructure demand (AI data centres)', 'US infrastructure spending', 'Renewable energy projects pipeline'],
+    risks: ['PE 70x is extreme for construction sector', 'Insider selling $39M — no buying', 'Analyst avg target 40% below current price', 'Dividend yield appears unsustainable']
+  },
+  {
+    name: 'ATI Inc',
+    ticker: 'ATI',
+    current: 165.08,
+    week52Low: 75,
+    week52High: 170,
+    analystTarget: 175,
+    pe: 28,
+    div: 0,
+    rating: 'Overweight',
+    rsi: 68,
+    macd: 'Bullish (moderating)',
+    buyZone: [145, 152],
+    verdict: 'BUY ON PULLBACK',
+    verdictClass: 'badge-green',
+    summary: 'High-performance aerospace and defense materials company. Up 69.7% in 6 months. KeyBanc raised target to $175 (Overweight). Strong defense spending theme aligns with portfolio strategy. Q1 results strong. Near 52-week high — do not chase. A pullback of 10-12% creates excellent entry.',
+    entry: 'Buy Zone: $145-$152. This is the prior breakout level and aligns with a 10-12% pullback. Size: Start with 30-40 shares (~$4,500-6,000).',
+    catalysts: ['Defense spending supercycle', 'Commercial aerospace recovery (Boeing 737 production ramp)', 'Nickel/titanium alloy pricing power', 'USAF contracts expansion'],
+    risks: ['Run 70% in 6 months — momentum may slow', 'Overweight at $167 from KeyBanc is recent — limited new upside vs target', 'General market correction risk']
+  },
+  {
+    name: 'Vanguard FTSE Emerging Markets',
+    ticker: 'VG71 / VWO',
+    current: 60.52,
+    week52Low: 45.91,
+    week52High: 59.62,
+    analystTarget: 68,
+    pe: 14,
+    div: 3.5,
+    rating: 'Accumulate',
+    rsi: 58,
+    macd: 'Neutral-Bullish',
+    buyZone: [54, 57],
+    verdict: 'ACCUMULATE — Wait for Dip',
+    verdictClass: 'badge-blue',
+    summary: 'Vanguard FTSE Emerging Markets ETF providing diversified EM exposure. China stimulus positive catalyst. EM equities outperforming in 2026 as USD weakens. Dividend yield ~3.5%. Trading slightly above 52-week high ($59.62). Good for portfolio diversification — currently US/EUR heavy.',
+    entry: 'Accumulate below $55-57. The ETF broke its 52-week high — if it pulls back to test that level as support, initiate a position. Consider 200-300 shares (~$11,000-18,000).',
+    catalysts: ['China stimulus accelerating', 'USD weakness benefiting EM', 'EM earnings recovery', 'Geopolitical diversification'],
+    risks: ['Iran/Hormuz escalation could hit EM risk appetite', 'China property sector still fragile', 'Higher-for-longer US rates headwind']
+  },
+  {
+    name: 'iShares MSCI World Small Cap',
+    ticker: 'IUSN',
+    current: 7.89,
+    week52Low: 5.68,
+    week52High: 7.91,
+    analystTarget: 9.20,
+    pe: 17,
+    div: 1.8,
+    rating: 'Buy',
+    rsi: 65,
+    macd: 'Bullish',
+    buyZone: [7.10, 7.40],
+    verdict: 'BUY ON DIP',
+    verdictClass: 'badge-green',
+    summary: 'iShares MSCI World Small Cap UCITS ETF providing global small-cap diversification. Trading near 52-week high of €7.91. Small caps typically outperform in later economic cycle when growth accelerates. Up from €5.68 low — strong +39% recovery. At current €7.89, near all-time high — wait for pullback.',
+    entry: 'Buy Zone: €7.10-€7.40. A pullback of 6-10% from current levels would be attractive. Start with 500 shares (~€3,500-3,700). Add more on further weakness.',
+    catalysts: ['Small cap premium in risk-on environment', 'Global economic resilience', 'European small cap recovery', 'Diversification value for current portfolio'],
+    risks: ['Near 52-week high — momentum pause risk', 'Small caps more volatile in risk-off episodes', 'Higher rates generally hurt small caps (higher debt costs)']
+  }
+];
+
+const scenarios = [
+  { label: 'Peace deal reached — Hormuz reopens within 30 days', prob: 30, color: '#22c55e', change: '↑ from 20%', detail: 'Pakistan mediation active; Trump paused Project Freedom on May 6 signaling "great progress". Oil would fall sharply (-20%), equities would surge. NEGATIVE for your Energy ETFs; POSITIVE for tech and banks.' },
+  { label: 'Ceasefire holds but Strait stays closed 2-3 months (BASE CASE)', prob: 40, color: '#f59e0b', change: '→ Unchanged', detail: 'Most likely scenario. Both sides claim self-defense but neither wants full escalation. Oil at $100 is painful for Iran. Markets can live with $100 oil + strong labour market. Your portfolio is positioned well for this.' },
+  { label: 'Escalation — strikes resume, oil >$130/bbl', prob: 20, color: '#ef4444', change: '↓ from 30%', detail: 'May 7-8 clashes did NOT break ceasefire per Trump. Reduces tail risk slightly. If oil hits $130+, your VanEck Defense ETF and gold (IGLN) positions would surge. Tech would correct 5-10%.' },
+  { label: 'Full peace agreement — Strait fully reopens', prob: 10, color: '#3b82f6', change: '↑ from 5%', detail: 'Pakistan\'s mediation creating genuine optimism. A full deal would be risk-ON in a big way for equities. Oil would crash to $70s. Your tech positions would benefit most. Trim defense ETF if this materialises.' }
+];
+
+// Build portfolio table
+function buildPortfolioTable() {
+  const tbody = document.getElementById('portfolioTable');
+  positions.forEach(p => {
+    const costEur = p.currency === 'USD' ? (p.cost * p.shares / EUR_USD) : (p.cost * p.shares);
+    const currEur = p.currency === 'USD' ? (p.current * p.shares / EUR_USD) : (p.current * p.shares);
+    const pnl = currEur - costEur;
+    const pct = ((p.current - p.cost) / p.cost * 100).toFixed(1);
+    const pnlClass = pnl >= 0 ? 'pos' : 'neg';
+    const pctClass = pnl >= 0 ? 'pos' : 'neg';
+    const macdBadge = p.macd.includes('Bullish') ? 'badge-green' : p.macd.includes('Neutral') ? 'badge-gray' : 'badge-red';
+    const actionClass = p.action === 'TRIM' ? 'badge-red' : p.action.includes('ADD') ? 'badge-green' : p.action === 'WATCH' ? 'badge-yellow' : 'badge-gray';
+    const rsiColor = p.rsi >= 70 ? '#ef4444' : p.rsi <= 40 ? '#3b82f6' : '#22c55e';
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><strong>${p.name}</strong><br><span style="color:var(--muted);font-size:11px">${p.ticker} · ${p.shares} shares</span></td>
+      <td>${p.shares}</td>
+      <td>${p.currency === 'EUR' ? '€' : '$'}${p.cost.toFixed(2)}</td>
+      <td>${p.currency === 'EUR' ? '€' : '$'}${p.current.toFixed(2)}</td>
+      <td class="${pnlClass}"><strong>${pnl >= 0 ? '+' : ''}€${Math.round(pnl).toLocaleString()}</strong></td>
+      <td class="${pctClass}"><strong>${pct >= 0 ? '+' : ''}${pct}%</strong></td>
+      <td><span style="color:${rsiColor};font-weight:700">${p.rsi}</span></td>
+      <td><span class="badge ${macdBadge}" style="font-size:10px">${p.macd}</span></td>
+      <td>${p.div > 0 ? p.div.toFixed(1) + '%' : '—'}</td>
+      <td><span class="badge ${actionClass}">${p.action}</span></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Build stock selector
+function buildStockSelector() {
+  const sel = document.getElementById('stockSelect');
+  positions.forEach((p, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${p.ticker} — ${p.name}`;
+    sel.appendChild(opt);
+  });
+  updateDetail();
+}
+
+function updateDetail() {
+  const idx = document.getElementById('stockSelect').value;
+  const p = positions[idx];
+  const panel = document.getElementById('detailPanel');
+
+  const costEur = p.currency === 'USD' ? (p.cost * p.shares / EUR_USD) : (p.cost * p.shares);
+  const currEur = p.currency === 'USD' ? (p.current * p.shares / EUR_USD) : (p.current * p.shares);
+  const pnl = currEur - costEur;
+  const pct = ((p.current - p.cost) / p.cost * 100).toFixed(1);
+  const pnlClass = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+
+  const rsiColor = p.rsi >= 70 ? 'var(--red)' : p.rsi <= 40 ? 'var(--blue)' : 'var(--green)';
+  const rsiLabel = p.rsi >= 70 ? 'Overbought' : p.rsi <= 40 ? 'Oversold' : 'Neutral';
+  const rsiPct = p.rsi + '%';
+
+  const actionClass = p.action === 'TRIM' ? 'rec-trim' : p.action.includes('ADD') ? 'rec-buy' : 'rec-hold';
+
+  const upside = p.target ? (((p.target - p.current) / p.current) * 100).toFixed(1) : 'N/A';
+
+  panel.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <h2 style="font-size:20px;font-weight:700">${p.name}</h2>
+        <p style="color:var(--muted);font-size:13px">${p.ticker} · ${p.sector} · ${p.shares} shares · ${p.currency}</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:26px;font-weight:700">${p.currency === 'EUR' ? '€' : '$'}${p.current.toFixed(2)}</div>
+        <div style="color:${pnlClass};font-size:14px">${pct >= 0 ? '+' : ''}${pct}% from cost</div>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="label">Cost Basis (total)</div>
+        <div class="value" style="font-size:16px">€${Math.round(costEur).toLocaleString()}</div>
+        <div style="color:var(--muted);font-size:11px">@ ${p.currency === 'EUR' ? '€' : '$'}${p.cost.toFixed(2)}/share</div>
+      </div>
+      <div class="detail-item">
+        <div class="label">Current Value</div>
+        <div class="value" style="font-size:16px">€${Math.round(currEur).toLocaleString()}</div>
+        <div style="color:var(--muted);font-size:11px">@ ${p.currency === 'EUR' ? '€' : '$'}${p.current.toFixed(2)}/share</div>
+      </div>
+      <div class="detail-item">
+        <div class="label">Unrealised P&L</div>
+        <div class="value" style="font-size:16px;color:${pnlClass}">${pnl >= 0 ? '+' : ''}€${Math.round(pnl).toLocaleString()}</div>
+        <div style="color:${pnlClass};font-size:11px">${pct >= 0 ? '+' : ''}${pct}%</div>
+      </div>
+      <div class="detail-item">
+        <div class="label">Analyst Target</div>
+        <div class="value" style="font-size:16px">${p.target ? (p.currency === 'EUR' ? '€' : '$') + p.target : 'N/A'}</div>
+        <div style="color:${upside >= 0 ? 'var(--green)' : 'var(--red)'};font-size:11px">${upside !== 'N/A' ? (upside >= 0 ? '+' : '') + upside + '% upside' : ''}</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="detail-item">
+        <div class="label" style="margin-bottom:8px">RSI (estimated): <strong style="color:${rsiColor}">${p.rsi} — ${rsiLabel}</strong></div>
+        <div class="rsi-indicator">
+          <span style="font-size:11px;color:var(--muted)">0</span>
+          <div class="rsi-bar">
+            <div class="rsi-marker" style="left:${rsiPct}"></div>
+          </div>
+          <span style="font-size:11px;color:var(--muted)">100</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">
+          <span>Oversold (&lt;30)</span><span>Neutral (30-70)</span><span>Overbought (&gt;70)</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">RSI ${p.rsi}: ${p.rsi >= 70 ? '⚠️ Overbought — momentum stretched, risk of pullback. Consider trimming or setting stop.' : p.rsi <= 40 ? '💡 Oversold — potential bounce opportunity. Do not sell here.' : '✅ Neutral zone — momentum healthy, no immediate action signal.'}</p>
+      </div>
+      <div class="detail-item">
+        <div class="label">MACD Signal</div>
+        <div style="font-size:16px;font-weight:700;margin:8px 0">${p.macd}</div>
+        <p style="font-size:12px;color:var(--muted)">${p.macd.includes('Bullish') ? '📈 MACD line above signal line — trend is bullish. Upward momentum in place.' : p.macd.includes('Bearish') ? '📉 MACD showing bearish crossover — downward momentum building. Monitor closely.' : '⚖️ MACD near neutral — trend is consolidating. Watch for next directional move.'}</p>
+        ${p.div > 0 ? `<div style="margin-top:8px;padding:8px;background:rgba(34,197,94,0.1);border-radius:4px;font-size:12px">💰 Dividend yield: <strong style="color:var(--green)">${p.div}%</strong></div>` : ''}
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div class="label" style="margin-bottom:6px">Latest News & Context</div>
+      <div style="background:var(--surface2);border-radius:6px;padding:12px;font-size:13px;line-height:1.6">${p.news}</div>
+    </div>
+
+    <div class="recommendation ${actionClass}">
+      <strong>Recommendation:</strong> ${p.rec}
+    </div>
+  `;
+}
+
+// Build watchlist
+function buildWatchlist() {
+  const container = document.getElementById('watchlistContainer');
+  watchlist.forEach(w => {
+    const pctFromBuyLow = (((w.current - w.buyZone[0]) / w.current) * 100).toFixed(1);
+    const distToBuyZone = pctFromBuyLow > 0 ? `${pctFromBuyLow}% above buy zone` : `IN buy zone`;
+    const rsiColor = w.rsi >= 70 ? 'var(--red)' : w.rsi <= 40 ? 'var(--blue)' : 'var(--green)';
+
+    const card = document.createElement('div');
+    card.className = 'watch-card';
+    card.innerHTML = `
+      <div class="watch-header">
+        <div>
+          <div class="watch-name">${w.name}</div>
+          <div class="watch-ticker">${w.ticker}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:700">$${w.current.toLocaleString()}</div>
+          <span class="badge ${w.verdictClass}">${w.verdict}</span>
+        </div>
+      </div>
+
+      <div class="watch-metrics">
+        <div class="watch-metric">
+          <div class="wm-label">52-Week Low</div>
+          <div class="wm-value">${w.current > 100 ? '$' : '€'}${w.week52Low.toLocaleString()}</div>
+        </div>
+        <div class="watch-metric">
+          <div class="wm-label">52-Week High</div>
+          <div class="wm-value">${w.current > 100 ? '$' : '€'}${w.week52High.toLocaleString()}</div>
+        </div>
+        <div class="watch-metric">
+          <div class="wm-label">Analyst Target</div>
+          <div class="wm-value" style="color:${w.analystTarget > w.current ? 'var(--green)' : 'var(--red)'}">${w.current > 100 ? '$' : '€'}${w.analystTarget.toLocaleString()}</div>
+        </div>
+        <div class="watch-metric">
+          <div class="wm-label">RSI (est.) / MACD</div>
+          <div class="wm-value" style="color:${rsiColor}">${w.rsi} / ${w.macd.split(' ')[0]}</div>
+        </div>
+      </div>
+
+      <p style="font-size:13px;line-height:1.6;margin-bottom:12px;color:var(--muted)">${w.summary}</p>
+
+      <div class="entry-zone">
+        🎯 <strong>Entry Strategy:</strong> ${w.entry}
+        <div style="margin-top:6px;color:var(--muted)">Current price is <strong style="color:${parseFloat(pctFromBuyLow) > 0 ? 'var(--yellow)' : 'var(--green)'}">${distToBuyZone}</strong> — ${parseFloat(pctFromBuyLow) > 0 ? '⏳ Patience required. Set a price alert at buy zone.' : '✅ Consider initiating a position now.'}</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+        <div>
+          <div style="font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">✅ Catalysts</div>
+          ${w.catalysts.map(c => `<div style="font-size:12px;padding:3px 0;color:var(--muted)">• ${c}</div>`).join('')}
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">⚠️ Risks</div>
+          ${w.risks.map(r => `<div style="font-size:12px;padding:3px 0;color:var(--muted)">• ${r}</div>`).join('')}
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Build scenarios
+function buildScenarios() {
+  const container = document.getElementById('scenariosContainer');
+  scenarios.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'scenario-row';
+    div.innerHTML = `
+      <div class="scenario-prob" style="color:${s.color}">${s.prob}%</div>
+      <div style="flex:1">
+        <div style="font-weight:600;margin-bottom:4px">${s.label}</div>
+        <div class="scenario-bar"><div class="scenario-fill" style="width:${s.prob}%;background:${s.color}"></div></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">${s.change} &nbsp;|&nbsp; ${s.detail}</div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// Build segment chart
+function buildSegmentChart() {
+  const ctx = document.getElementById('segmentChart');
+  const segments = {};
+  positions.forEach(p => {
+    const costEur = p.currency === 'USD' ? (p.cost * p.shares / EUR_USD) : (p.cost * p.shares);
+    const currEur = p.currency === 'USD' ? (p.current * p.shares / EUR_USD) : (p.current * p.shares);
+    if (!segments[p.sector]) segments[p.sector] = { cost: 0, curr: 0 };
+    segments[p.sector].cost += costEur;
+    segments[p.sector].curr += currEur;
+  });
+
+  const labels = Object.keys(segments);
+  const data = labels.map(l => Math.round(segments[l].curr));
+  const colors = ['#6366f1','#22c55e','#3b82f6','#f59e0b','#a855f7','#f97316','#ef4444'];
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Current Value (€)',
+        data,
+        backgroundColor: colors.slice(0, labels.length),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => `€${ctx.raw.toLocaleString()}` }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#2e3147' }, ticks: { color: '#8892a4' } },
+        y: { grid: { color: '#2e3147' }, ticks: { color: '#8892a4', callback: v => '€' + (v/1000).toFixed(0) + 'k' } }
+      }
+    }
+  });
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// Init
+buildPortfolioTable();
+buildStockSelector();
+buildWatchlist();
+buildScenarios();
+buildSegmentChart();
+</script>
+</body>
+</html>
