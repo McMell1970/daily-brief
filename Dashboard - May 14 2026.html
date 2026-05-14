@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Brief Dashboard — May 14, 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+
+  .header { background: linear-gradient(135deg, #1a1f2e 0%, #16213e 100%); padding: 20px 32px; border-bottom: 1px solid #2d3748; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #e2e8f0; }
+  .header p { font-size: 13px; color: #718096; margin-top: 4px; }
+
+  .market-bar { display: flex; gap: 20px; background: #1a1f2e; padding: 12px 32px; border-bottom: 1px solid #2d3748; overflow-x: auto; flex-wrap: wrap; }
+  .market-item { display: flex; flex-direction: column; min-width: 110px; }
+  .market-item .label { font-size: 10px; text-transform: uppercase; color: #718096; letter-spacing: 0.5px; }
+  .market-item .value { font-size: 15px; font-weight: 700; color: #e2e8f0; }
+  .market-item .change { font-size: 11px; }
+  .pos { color: #68d391; }
+  .neg { color: #fc8181; }
+  .neutral { color: #a0aec0; }
+
+  .tabs { display: flex; gap: 0; background: #1a1f2e; border-bottom: 1px solid #2d3748; padding: 0 32px; overflow-x: auto; }
+  .tab { padding: 14px 24px; font-size: 13px; font-weight: 600; cursor: pointer; color: #718096; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .tab:hover { color: #e2e8f0; }
+  .tab.active { color: #63b3ed; border-bottom-color: #63b3ed; }
+
+  .content { padding: 24px 32px; max-width: 1400px; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Summary cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 10px; padding: 16px; }
+  .card .card-label { font-size: 11px; text-transform: uppercase; color: #718096; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .card .card-value { font-size: 22px; font-weight: 700; color: #e2e8f0; }
+  .card .card-sub { font-size: 12px; color: #718096; margin-top: 4px; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; background: #1a1f2e; color: #718096; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1e2533; white-space: nowrap; }
+  tr:hover td { background: #1a1f2e; }
+  .ticker { font-weight: 700; font-size: 12px; color: #63b3ed; }
+  .name { color: #a0aec0; font-size: 12px; }
+
+  /* Rec badges */
+  .rec { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .rec-hold { background: #2d3748; color: #a0aec0; }
+  .rec-buy { background: #22543d; color: #68d391; }
+  .rec-trim { background: #742a2a; color: #fc8181; }
+  .rec-watch { background: #2a4365; color: #63b3ed; }
+
+  /* RSI/MACD gauge */
+  .indicator { display: flex; flex-direction: column; gap: 3px; }
+  .ind-bar { height: 4px; border-radius: 2px; background: #2d3748; width: 60px; position: relative; }
+  .ind-fill { height: 100%; border-radius: 2px; }
+  .ind-label { font-size: 10px; color: #718096; }
+
+  /* Stock detail */
+  .stock-select { margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .stock-select select { background: #1a1f2e; border: 1px solid #2d3748; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .detail-card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 10px; padding: 20px; }
+  .detail-card h3 { font-size: 13px; text-transform: uppercase; color: #718096; letter-spacing: 0.5px; margin-bottom: 14px; }
+  .detail-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #1e2533; font-size: 13px; }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .dk { color: #718096; }
+  .detail-row .dv { font-weight: 600; color: #e2e8f0; }
+  .analysis-text { font-size: 13px; line-height: 1.7; color: #a0aec0; }
+  .analysis-text strong { color: #e2e8f0; }
+
+  /* Watchlist */
+  .watchlist-entry { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .watchlist-entry h3 { font-size: 15px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  .watchlist-entry .wl-meta { font-size: 12px; color: #718096; margin-bottom: 14px; }
+  .wl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .wl-stat { }
+  .wl-stat .ws-label { font-size: 10px; text-transform: uppercase; color: #718096; letter-spacing: 0.5px; }
+  .wl-stat .ws-value { font-size: 15px; font-weight: 700; color: #e2e8f0; }
+  .advice-box { background: #162032; border: 1px solid #2a4365; border-radius: 6px; padding: 12px 14px; font-size: 13px; color: #a0aec0; line-height: 1.6; }
+  .advice-box strong { color: #63b3ed; }
+
+  /* Scenario table */
+  .scenario-grid { display: grid; gap: 10px; }
+  .scenario-row { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+  .prob-badge { font-size: 18px; font-weight: 800; min-width: 52px; text-align: center; }
+  .prob-high { color: #68d391; }
+  .prob-mid { color: #f6ad55; }
+  .prob-low { color: #fc8181; }
+  .scenario-text { }
+  .scenario-text .st { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+  .scenario-text .sr { font-size: 12px; color: #718096; margin-top: 3px; }
+
+  /* Alert box */
+  .alert { background: #2d1515; border: 1px solid #742a2a; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #fc8181; margin-bottom: 16px; }
+  .alert strong { color: #feb2b2; }
+
+  .note { font-size: 11px; color: #718096; margin-top: 16px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 Daily Brief Dashboard — May 14, 2026</h1>
+  <p>Portfolio reference: April 21, 2026 | All prices require verification from a live feed before trading</p>
+</div>
+
+<!-- Market Bar -->
+<div class="market-bar">
+  <div class="market-item"><span class="label">S&P 500</span><span class="value">7,444</span><span class="change pos">+0.58%</span></div>
+  <div class="market-item"><span class="label">Nasdaq</span><span class="value">26,402</span><span class="change pos">+1.20%</span></div>
+  <div class="market-item"><span class="label">Dow Jones</span><span class="value">49,693</span><span class="change neg">-0.14%</span></div>
+  <div class="market-item"><span class="label">VIX</span><span class="value">17.99</span><span class="change neutral">Moderate</span></div>
+  <div class="market-item"><span class="label">Gold/oz</span><span class="value">$4,690</span><span class="change neutral">~flat</span></div>
+  <div class="market-item"><span class="label">Brent</span><span class="value">$105.87</span><span class="change pos">+0.22%</span></div>
+  <div class="market-item"><span class="label">WTI (est.)</span><span class="value">~$102</span><span class="change neutral">est.</span></div>
+  <div class="market-item"><span class="label">IGLN (GBX)</span><span class="value">90.51</span><span class="change neutral">May 11</span></div>
+  <div class="market-item"><span class="label">EQQQ</span><span class="value">€608.55</span><span class="change pos">+1.36%</span></div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')">📈 Portfolio Overview</div>
+  <div class="tab" onclick="showTab('detail')">🔍 Stock Detail</div>
+  <div class="tab" onclick="showTab('watchlist')">👀 Watchlist</div>
+  <div class="tab" onclick="showTab('scenarios')">🌐 Scenarios</div>
+</div>
+
+<div class="content">
+
+<!-- ===== TAB 1: OVERVIEW ===== -->
+<div id="tab-overview" class="tab-panel active">
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Est. Portfolio (EUR)</div>
+      <div class="card-value" style="color:#68d391">~€305K</div>
+      <div class="card-sub">Rough estimate — verify</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cash Position</div>
+      <div class="card-value">~€12,341</div>
+      <div class="card-sub">EUR + USD (~10-13%)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Top Winner</div>
+      <div class="card-value" style="color:#68d391">MU +79%</div>
+      <div class="card-sub">$448 → $802</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Top Loser</div>
+      <div class="card-value" style="color:#fc8181">MAP -7.5%</div>
+      <div class="card-sub">€4.26 → €3.94</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Urgent Action</div>
+      <div class="card-value" style="color:#f6ad55;font-size:15px">Trim MU + MAP</div>
+      <div class="card-sub">See actions tab</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Stock</th>
+          <th>Shares</th>
+          <th>Cost Price</th>
+          <th>Current*</th>
+          <th>P&L %</th>
+          <th>P&L (local)</th>
+          <th>RSI Est.</th>
+          <th>MACD Est.</th>
+          <th>Dividend</th>
+          <th>Rec.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="ticker">CASH EUR</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td>€3,229</td>
+          <td class="neutral">—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">CASH USD</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td>$10,742</td>
+          <td class="neutral">—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">ABN</span><br><span class="name">ABN AMRO</span></td>
+          <td>350</td>
+          <td>€30.10</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>~5-6%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">ACS</span><br><span class="name">ACS Group</span></td>
+          <td>110</td>
+          <td>€122.90</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>~3-4%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">A3M</span><br><span class="name">Atresmedia</span></td>
+          <td>2,000</td>
+          <td>€5.13</td>
+          <td>€5.30</td>
+          <td class="pos">+3.3%</td>
+          <td class="pos">+€340</td>
+          <td>~50 (Neutral)</td>
+          <td>Flat/+</td>
+          <td>~6-7%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">ABBV</span><br><span class="name">AbbVie</span></td>
+          <td>30</td>
+          <td>$203.71</td>
+          <td>$207.86</td>
+          <td class="pos">+2.0%</td>
+          <td class="pos">+$124</td>
+          <td>~55-60</td>
+          <td>Pos cross.</td>
+          <td>~3.5%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">BBVA</span><br><span class="name">BBVA</span></td>
+          <td>700</td>
+          <td>€19.62</td>
+          <td>~€18.24</td>
+          <td class="neg">-7.0%</td>
+          <td class="neg">-€965</td>
+          <td>~40-45</td>
+          <td>Negative</td>
+          <td>~5-6%*</td>
+          <td><span class="rec rec-watch">Watch</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">SAN</span><br><span class="name">Santander</span></td>
+          <td>1,200</td>
+          <td>€10.76</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>~4-5%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">CLS</span><br><span class="name">Celestica</span></td>
+          <td>15</td>
+          <td>$401.12</td>
+          <td>$374.01</td>
+          <td class="neg">-6.8%</td>
+          <td class="neg">-$406</td>
+          <td>~45</td>
+          <td>Slightly -</td>
+          <td>Small</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">CRDO</span><br><span class="name">Credo Tech</span></td>
+          <td>62</td>
+          <td>$174.53</td>
+          <td>$190.15</td>
+          <td class="pos">+8.9%</td>
+          <td class="pos">+$968</td>
+          <td>~60-65</td>
+          <td>Positive</td>
+          <td>None</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">ING</span><br><span class="name">ING Groep</span></td>
+          <td>300</td>
+          <td>€24.50</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>~4-5%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">IBE</span><br><span class="name">Iberdrola</span></td>
+          <td>150</td>
+          <td>€19.87</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>~4%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">EQQQ</span><br><span class="name">Invesco EQQQ</span></td>
+          <td>29</td>
+          <td>€550.00</td>
+          <td>€608.55</td>
+          <td class="pos">+10.6%</td>
+          <td class="pos">+€1,698</td>
+          <td>~65</td>
+          <td>Bullish</td>
+          <td>None</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">LOG</span><br><span class="name">Logista</span></td>
+          <td>100</td>
+          <td>€32.70</td>
+          <td>€33.38</td>
+          <td class="pos">+2.1%</td>
+          <td class="pos">+€68</td>
+          <td>~60-65</td>
+          <td>Positive</td>
+          <td>~7-8%*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">LITE</span><br><span class="name">Lumentum</span></td>
+          <td>14</td>
+          <td>$895.11</td>
+          <td>⚠️ Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>None</td>
+          <td><span class="rec rec-watch">Verify!</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">MVC</span><br><span class="name">Metrovacesa</span></td>
+          <td>958</td>
+          <td>€11.92</td>
+          <td>€11.75</td>
+          <td class="neg">-1.4%</td>
+          <td class="neg">-€162</td>
+          <td>~48</td>
+          <td>Flat</td>
+          <td>Verify</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr style="background: rgba(104,211,145,0.05);">
+          <td><span class="ticker">MU</span><br><span class="name">Micron ⭐</span></td>
+          <td>70</td>
+          <td>$448.42</td>
+          <td>$802.50</td>
+          <td class="pos">+79.4%</td>
+          <td class="pos">+$24,786</td>
+          <td>~72-76 ⚠️</td>
+          <td>Strong +, vol.</td>
+          <td>~0.1%*</td>
+          <td><span class="rec rec-trim">Trim 15-20</span></td>
+        </tr>
+        <tr style="background: rgba(252,129,129,0.05);">
+          <td><span class="ticker">MAP</span><br><span class="name">Mapfre ⚠️</span></td>
+          <td>3,100</td>
+          <td>€4.26</td>
+          <td>€3.94</td>
+          <td class="neg">-7.5%</td>
+          <td class="neg">-€992</td>
+          <td>~38 oversold</td>
+          <td>Negative</td>
+          <td>~5-6%*</td>
+          <td><span class="rec rec-trim">Trim 1000</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">NTH</span><br><span class="name">Naturhouse</span></td>
+          <td>2,350</td>
+          <td>€2.53</td>
+          <td>€2.60</td>
+          <td class="pos">+2.8%</td>
+          <td class="pos">+€164</td>
+          <td>N/A (illiquid)</td>
+          <td>N/A</td>
+          <td>High*</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">HOME</span><br><span class="name">Neinor Homes</span></td>
+          <td>305</td>
+          <td>€16.90</td>
+          <td>€17.02</td>
+          <td class="pos">+0.7%</td>
+          <td class="pos">+€37</td>
+          <td>~52</td>
+          <td>Slightly +</td>
+          <td>Verify</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr style="background: rgba(104,211,145,0.05);">
+          <td><span class="ticker">SNDK</span><br><span class="name">SanDisk ⭐</span></td>
+          <td>27</td>
+          <td>$913.02</td>
+          <td>$1,443.77</td>
+          <td class="pos">+58.1%</td>
+          <td class="pos">+$14,330</td>
+          <td>~75-80 ⚠️</td>
+          <td>Strongly +</td>
+          <td>None</td>
+          <td><span class="rec rec-trim">Trim 5-7</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">ENR</span><br><span class="name">Siemens Energy</span></td>
+          <td>60</td>
+          <td>€168.84</td>
+          <td>~€212*</td>
+          <td class="pos">+25.6%*</td>
+          <td class="pos">+€2,588*</td>
+          <td>~65*</td>
+          <td>Positive*</td>
+          <td>Verify</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">TTMI</span><br><span class="name">TTM Tech</span></td>
+          <td>40</td>
+          <td>$125.81</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Verify</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">UNI</span><br><span class="name">Unicaja</span></td>
+          <td>4,000</td>
+          <td>€2.85</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Verify</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">DFEN</span><br><span class="name">VanEck Defense</span></td>
+          <td>120</td>
+          <td>€59.21</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>None</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">VDIV</span><br><span class="name">VanEck Div. Leaders</span></td>
+          <td>800</td>
+          <td>€52.46</td>
+          <td>€52.04</td>
+          <td class="neg">-0.8%</td>
+          <td class="neg">-€336</td>
+          <td>~48</td>
+          <td>Flat/Slightly -</td>
+          <td>1.62% fwd</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">QCOM</span><br><span class="name">VanEck Quantum</span></td>
+          <td>100</td>
+          <td>€23.05</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>None</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">SMH-EU</span><br><span class="name">VanEck Semi</span></td>
+          <td>225</td>
+          <td>€69.17</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>None</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">NUKE</span><br><span class="name">VanEck Uranium</span></td>
+          <td>90</td>
+          <td>€53.48</td>
+          <td>Verify</td>
+          <td class="neutral">?</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>None</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">WDC</span><br><span class="name">Western Digital</span></td>
+          <td>33</td>
+          <td>$374.11</td>
+          <td>$496.90</td>
+          <td class="pos">+32.8%</td>
+          <td class="pos">+$4,052</td>
+          <td>~65-68</td>
+          <td>Positive</td>
+          <td>None</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+        <tr>
+          <td><span class="ticker">INRG</span><br><span class="name">iShares Clean Energy</span></td>
+          <td>500</td>
+          <td>€9.60</td>
+          <td>~€11.50*</td>
+          <td class="pos">+19.8%*</td>
+          <td class="pos">+€950*</td>
+          <td>~55*</td>
+          <td>Slightly +*</td>
+          <td>Verify</td>
+          <td><span class="rec rec-hold">Hold</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">* Estimated or unconfirmed prices. RSI/MACD are directional estimates based on price action — not computed from full price series. Verify all figures from your broker before trading. Dividend yields are approximate and should be verified from company IR websites.</p>
+</div>
+
+<!-- ===== TAB 2: STOCK DETAIL ===== -->
+<div id="tab-detail" class="tab-panel">
+  <div class="stock-select">
+    <label style="font-size:13px;color:#718096;">Select a position:</label>
+    <select id="stockSelector" onchange="showStockDetail()">
+      <option value="MU">Micron Technology (MU)</option>
+      <option value="SNDK">SanDisk (SNDK)</option>
+      <option value="WDC">Western Digital (WDC)</option>
+      <option value="CRDO">Credo Technology (CRDO)</option>
+      <option value="CLS">Celestica (CLS)</option>
+      <option value="ABBV">AbbVie (ABBV)</option>
+      <option value="EQQQ">Invesco EQQQ (EQQQ)</option>
+      <option value="VDIV">VanEck Div. Leaders (VDIV)</option>
+      <option value="BBVA">BBVA (BBVA)</option>
+      <option value="MAP">Mapfre (MAP)</option>
+      <option value="A3M">Atresmedia (A3M)</option>
+      <option value="LITE">Lumentum (LITE)</option>
+      <option value="ENR">Siemens Energy (ENR)</option>
+      <option value="LOG">Logista (LOG)</option>
+      <option value="HOME">Neinor Homes (HOME)</option>
+      <option value="MVC">Metrovacesa (MVC)</option>
+    </select>
+  </div>
+  <div id="stockDetailContent"></div>
+</div>
+
+<!-- ===== TAB 3: WATCHLIST ===== -->
+<div id="tab-watchlist" class="tab-panel">
+  <div class="alert">
+    <strong>Note:</strong> All watchlist prices sourced from web research on May 14, 2026. Verify from a live feed before placing orders. This is not financial advice.
+  </div>
+
+  <!-- UNFI -->
+  <div class="watchlist-entry">
+    <h3>United Natural Foods (UNFI)</h3>
+    <div class="wl-meta">NYSE: UNFI | Grocery wholesale / natural foods distributor</div>
+    <div class="wl-grid">
+      <div class="wl-stat"><div class="ws-label">Current Price</div><div class="ws-value">~$48.90</div></div>
+      <div class="wl-stat"><div class="ws-label">Analyst Target</div><div class="ws-value">$44.71</div></div>
+      <div class="wl-stat"><div class="ws-label">Entry Target</div><div class="ws-value" style="color:#63b3ed">$42–44</div></div>
+      <div class="wl-stat"><div class="ws-label">52-wk context</div><div class="ws-value">Recovering</div></div>
+      <div class="wl-stat"><div class="ws-label">RSI Est.</div><div class="ws-value">~55 (Neutral)</div></div>
+    </div>
+    <div class="advice-box">
+      <strong>Entry advice:</strong> UNFI distributes natural, organic and specialty foods to independent retailers and chains. It is a recovery play — the stock has rallied ~9% recently. The 12-month analyst consensus target is $44.71, which is <em>below</em> the current price of ~$48.90, suggesting the stock has run ahead of fundamentals. <strong>Wait for a pullback to $42–44 (the analyst target range) before initiating a position.</strong> A pullback to this level would offer a ~10% downside buffer from current price and align with fundamental valuation. Stop-loss if entering: $38. Potential upside if recovery continues: $55–58 (blue-sky scenario of operating leverage normalisation). Iran-driven inflation in food/energy costs is a headwind for UNFI's margins — factor this into timing.
+    </div>
+  </div>
+
+  <!-- AGX -->
+  <div class="watchlist-entry">
+    <h3>Argan Inc (AGX)</h3>
+    <div class="wl-meta">NYSE: AGX | Power plant engineering & construction (EPC contractor)</div>
+    <div class="wl-grid">
+      <div class="wl-stat"><div class="ws-label">Current Price</div><div class="ws-value">~$704</div></div>
+      <div class="wl-stat"><div class="ws-label">ATH (May 5)</div><div class="ws-value">$742.30</div></div>
+      <div class="wl-stat"><div class="ws-label">Entry Target</div><div class="ws-value" style="color:#63b3ed">$620–650</div></div>
+      <div class="wl-stat"><div class="ws-label">52-wk low</div><div class="ws-value">$171.59</div></div>
+      <div class="wl-stat"><div class="ws-label">RSI Est.</div><div class="ws-value">~60–65</div></div>
+    </div>
+    <div class="advice-box">
+      <strong>Entry advice:</strong> Argan is an engineering-procurement-construction (EPC) contractor specialising in gas-fired and renewable power plants — a direct beneficiary of the AI data centre buildout (massive power demand) and the energy security narrative driven by the Iran conflict. The stock has surged from $171 (52-week low) to $742 ATH on May 5 before pulling back to $704. RSI is elevated. <strong>Ideal entry: $620–650 (a 12–16% pullback from current price, bringing RSI to a more comfortable 45–55 zone).</strong> This level corresponds to the prior breakout area and provides a stronger risk/reward. Stop: $580. Target: $800+ if AI/data centre power demand continues (verify analyst targets before entry — I could not confirm specific analyst price targets from my research). The risk: if Iran tensions ease and energy capex slows, the thesis weakens.
+    </div>
+  </div>
+
+  <!-- ATI -->
+  <div class="watchlist-entry">
+    <h3>ATI Inc (ATI)</h3>
+    <div class="wl-meta">NYSE: ATI | Specialty materials — titanium, nickel alloys, aerospace</div>
+    <div class="wl-grid">
+      <div class="wl-stat"><div class="ws-label">Current Price</div><div class="ws-value">⚠️ Verify</div></div>
+      <div class="wl-stat"><div class="ws-label">Entry Target</div><div class="ws-value" style="color:#63b3ed">On pullback</div></div>
+      <div class="wl-stat"><div class="ws-label">Sector</div><div class="ws-value">Aerospace/Defense</div></div>
+      <div class="wl-stat"><div class="ws-label">RSI Est.</div><div class="ws-value">Verify</div></div>
+    </div>
+    <div class="advice-box">
+      <strong>Entry advice:</strong> ATI produces specialty materials including titanium and nickel superalloys for aerospace engines, defence, and medical equipment. The thesis: defence spending is rising (NATO budgets, Iran conflict procurement), commercial aerospace is recovering (Boeing/Airbus backlogs), and ATI's alloys are mission-critical. <strong>I was unable to confirm a specific current price for ATI in my research — verify from a live feed before proceeding.</strong> Entry strategy: wait for a pullback to a level where RSI is below 50 (oversold/neutral). Set a buy limit roughly 8–12% below current price. Stop: 15% below entry. Given the VanEck Defense ETF already provides you with indirect defense exposure, sizing ATI as a small-to-medium complementary position (not a full allocation) makes sense. Verify your broker's current price and analyst targets before any action.
+    </div>
+  </div>
+
+  <!-- VG71 -->
+  <div class="watchlist-entry">
+    <h3>Vanguard FTSE Emerging Markets ETF (VG71)</h3>
+    <div class="wl-meta">London Stock Exchange: VFEM | Broad EM equity exposure (excl. South Korea)</div>
+    <div class="wl-grid">
+      <div class="wl-stat"><div class="ws-label">Current Price</div><div class="ws-value">⚠️ Verify</div></div>
+      <div class="wl-stat"><div class="ws-label">Entry Stance</div><div class="ws-value" style="color:#f6ad55">Wait</div></div>
+      <div class="wl-stat"><div class="ws-label">Key risk</div><div class="ws-value">Iran / USD strength</div></div>
+    </div>
+    <div class="advice-box">
+      <strong>Entry advice:</strong> The US-China tariff truce (tariffs cut to 30%/10%) and Trump's Beijing summit are positive tailwinds for EM equities, particularly Chinese stocks which dominate this ETF. However, two headwinds warrant caution: (1) <strong>Iran conflict uncertainty</strong> — a deterioration could spike USD/oil and hurt EM currencies and consumer spending; (2) <strong>USD strength</strong> — a PPI-driven inflation spike could keep the USD stronger for longer, pressuring EM assets. <strong>Recommended entry: WAIT for clarity on the Iran ceasefire (within 2–3 weeks).</strong> If Iran framework is agreed, EM equities should rally 3–5%; that would then be a momentum entry rather than value entry. If you want to start a small position now, cap it at 25% of intended allocation and add on confirmation. I could not confirm a specific current price for VG71 — verify from your broker.
+    </div>
+  </div>
+
+  <!-- IUSN -->
+  <div class="watchlist-entry">
+    <h3>iShares MSCI World Small Cap UCITS ETF (IUSN)</h3>
+    <div class="wl-meta">XETRA / LSE: IUSN | Global developed-market small-cap equities</div>
+    <div class="wl-grid">
+      <div class="wl-stat"><div class="ws-label">Current Price</div><div class="ws-value">⚠️ Verify</div></div>
+      <div class="wl-stat"><div class="ws-label">Entry Stance</div><div class="ws-value" style="color:#63b3ed">Pullback entry</div></div>
+      <div class="wl-stat"><div class="ws-label">Expense ratio</div><div class="ws-value">~0.35%</div></div>
+    </div>
+    <div class="advice-box">
+      <strong>Entry advice:</strong> Small-cap global equities tend to outperform large-caps in early-to-mid economic expansion cycles and when the USD weakens. Potential scenario: if US-China trade truce firms up and Iran tensions ease, global risk appetite improves and small caps could significantly outperform. <strong>Entry target: buy on a 5–8% broad market pullback</strong> (e.g., if S&P 500 drops from 7,444 to ~6,900 on macro or Iran shock). This ETF complements your existing large-cap and sector ETF exposure. Size: start small (€2,000–3,000). Note that I could not confirm the current IUSN price from my research — verify before any order. The risk: in a risk-off environment (Iran escalation, hot CPI), small caps underperform. This is a medium-horizon (6–18 month) hold, not a short-term trade.
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 4: SCENARIOS ===== -->
+<div id="tab-scenarios" class="tab-panel">
+  <div style="margin-bottom:20px">
+    <h2 style="font-size:16px;color:#e2e8f0;margin-bottom:6px">Geopolitical & Macro Scenario Tracker</h2>
+    <p style="font-size:13px;color:#718096">Updated May 14, 2026. Probabilities are estimates based on market signals, prediction markets, and news analysis — not guaranteed.</p>
+  </div>
+
+  <div class="scenario-grid">
+    <div class="scenario-row">
+      <div class="prob-badge prob-mid">55%</div>
+      <div class="scenario-text">
+        <div class="st">Iran conflict continues — oil $95–115/bbl (Base Case)</div>
+        <div class="sr">Ceasefire on paper, partial Strait disruption, negotiations drag on. Brent stays elevated. Gold supported. Your Defense ETF and Siemens Energy benefit.</div>
+      </div>
+    </div>
+    <div class="scenario-row">
+      <div class="prob-badge prob-low">20%</div>
+      <div class="scenario-text">
+        <div class="st">Iran escalation — Strait fully closed, oil >$120</div>
+        <div class="sr">Hardliners in Tehran reject all terms; Trump renews bomb threats. Spike in gold (target $5,000+?), oil. Broad equity selloff. Your cash position becomes precious — do not deploy it ahead of this scenario.</div>
+      </div>
+    </div>
+    <div class="scenario-row">
+      <div class="prob-badge prob-mid">25%</div>
+      <div class="scenario-text">
+        <div class="st">Iran framework agreed — oil falls to $85–90</div>
+        <div class="sr">One-page MOU agreed; Strait reopens; sanctions relief path agreed. Gold falls $200-300/oz. EM equities rally. Energy sector pulls back. Rotate: add VG71, trim Siemens Energy/Defense ETF partially.</div>
+      </div>
+    </div>
+    <div class="scenario-row">
+      <div class="prob-badge prob-high">82%</div>
+      <div class="scenario-text">
+        <div class="st">US-China tariff truce extended after Xi summit</div>
+        <div class="sr">Market consensus. Positive for tech supply chains (CLS, CRDO, TTMI). EQQQ continues higher. Boeing confirms aircraft sales to China.</div>
+      </div>
+    </div>
+    <div class="scenario-row">
+      <div class="prob-badge prob-low">8%</div>
+      <div class="scenario-text">
+        <div class="st">US-China deal collapses — tariffs return >100%</div>
+        <div class="sr">Very low probability given both sides' economic stakes. Would hit CRDO, CLS, TTMI hardest (supply chain exposure). Tech broad selloff.</div>
+      </div>
+    </div>
+    <div class="scenario-row">
+      <div class="prob-badge prob-mid">40%</div>
+      <div class="scenario-text">
+        <div class="st">Fed cuts rates before end of 2026</div>
+        <div class="sr">PPI +1.4% MoM and CPI +3.8% YoY reduce room for cuts. But if growth slows (retail sales weak today?), Fed may be forced to cut. A cut would be bullish for bonds, gold, and VDIV. Bearish for USD.</div>
+      </div>
+    </div>
+    <div class="scenario-row">
+      <div class="prob-badge prob-mid">55%</div>
+      <div class="scenario-text">
+        <div class="st">Memory sector resumes bull run — SNDK >$1,600, MU >$900</div>
+        <div class="sr">AI HBM demand is secular. SanDisk Q3 FY26 EPS beat by 60%. Korea windfall tax is a risk but not a fundamental thesis breaker. Next quarterly earnings (July/August) will be the key catalyst. Hold your positions.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const names = ['overview', 'detail', 'watchlist', 'scenarios'];
+  tabs[names.indexOf(name)].classList.add('active');
+}
+
+const stockData = {
+  MU: {
+    name: 'Micron Technology', ticker: 'MU', exchange: 'NASDAQ', isin: 'US5951121038',
+    shares: 70, costPrice: 448.42, currency: 'USD',
+    currentPrice: 802.50, currentPriceNote: 'May 14, 2026 close (recovered from May 12 -9%)',
+    pnlPct: 79.4, pnlAbs: '+$24,786',
+    week52Low: 90.93, week52High: 818.67,
+    rsi: '72–76 (Overbought ⚠️)', macd: 'Strongly positive but volatile — possible exhaustion near 52-wk high',
+    dividend: '~$0.115/share annually (~0.07% yield) — not an income stock',
+    rec: 'PARTIAL PROFIT TAKE — sell 15–20 shares at $800–820',
+    stop: '$740', addLevel: '$740–760 (next dip)',
+    analysis: '<strong>Why this move:</strong> MU is your biggest winner at +79%. After a whipsaw May 12 (-9% on Korean windfall tax fears, then recovery), the stock is back near its 52-week high of $818.67. RSI is estimated in the 72–76 range — overbought territory by most measures.<br><br><strong>Fundamentals:</strong> AI high-bandwidth memory (HBM) demand remains secular and structural. The Korea windfall tax is a political risk, not a business risk. Q3 earnings cycle expected to be strong.<br><br><strong>The risk:</strong> At these levels, any macro shock (hot retail sales, Iran escalation, Fed hawkishness) could trigger another 10–15% drop. Selling 15–20 shares now locks in ~$12,000–16,000 at the highs while keeping 50–55 shares for further upside.<br><br><strong>Key levels:</strong> 52-wk high $818.67 is resistance. Support: $740 (recent range low), $680 (prior breakout). If it breaks below $740 on volume, it signals a deeper correction — use that as your stop.'
+  },
+  SNDK: {
+    name: 'SanDisk Corporation', ticker: 'SNDK', exchange: 'NASDAQ', isin: 'US80004C2008',
+    shares: 27, costPrice: 913.02, currency: 'USD',
+    currentPrice: 1443.77, currentPriceNote: 'May 13 close; recovered from May 12 drop',
+    pnlPct: 58.1, pnlAbs: '+$14,330',
+    week52Low: null, week52High: null,
+    rsi: '75–80 (Overbought ⚠️)', macd: 'Strongly bullish; steep momentum — gap risk elevated',
+    dividend: 'None — growth stock',
+    rec: 'PARTIAL PROFIT TAKE — sell 5–7 shares at $1,440–1,460',
+    stop: '$1,350 (previous support area)',
+    addLevel: '$1,300–1,350 (next significant pullback)',
+    analysis: '<strong>Extraordinary performance:</strong> SNDK is up +552% YTD 2026 and +3,299% over 12 months. At your cost of $913, you are up +58% — but the stock has already run well past fair value by traditional metrics.<br><br><strong>Q3 FY26 earnings:</strong> EPS $23.41 vs. $14.66 consensus (beat by 60%), revenue +251% YoY, datacenter segment +645%. The AI memory supercycle is very real.<br><br><strong>Risk factors:</strong> RSI estimated 75–80 (overbought). The May 12 -9% drop showed how quickly sentiment can reverse. Korea windfall tax risk is still unresolved. At $1,444, you are near vertical territory — Motley Fool flagged it as "too hot to handle."<br><br><strong>Action:</strong> Selling 5–7 shares generates $7,200–$10,100 in cash without abandoning the position. Keep 20–22 shares. If it pulls back to $1,300–1,350 and the thesis holds, consider buying back.<br><br><strong>Secondary offering risk:</strong> SanDisk priced a secondary offering in February 2026 — watch for dilution risk in any further capital raises.'
+  },
+  WDC: {
+    name: 'Western Digital Corporation', ticker: 'WDC', exchange: 'NASDAQ', isin: 'US9581021055',
+    shares: 33, costPrice: 374.11, currency: 'USD',
+    currentPrice: 496.90, currentPriceNote: 'May 14, 2026 intraday data',
+    pnlPct: 32.8, pnlAbs: '+$4,052',
+    week52Low: null, week52High: null,
+    rsi: '65–68 (Elevated but not extreme)', macd: 'Positive; momentum maintained',
+    dividend: 'None currently',
+    rec: 'HOLD — stop at $460',
+    stop: '$460',
+    addLevel: '$460–470 on next dip',
+    analysis: '<strong>Context:</strong> WDC dropped -8% on May 12 (same Korean windfall tax scare as MU/SNDK) and recovered. At +32.8% from your cost price, it has appreciated strongly but far less than MU (+79%) or SNDK (+58%).<br><br><strong>Relative performance:</strong> WDC is up 200% YTD 2026 and 921% over 12 months (from very low base). However, WDC is more diversified (flash + hard disk drives) versus SNDK (pure flash) and MU (pure memory), making it slightly less volatile.<br><br><strong>RSI/MACD:</strong> Estimated RSI ~65–68 — elevated but not in overbought territory unlike MU/SNDK. MACD remains positive. This suggests WDC has more room to run relative to its peers before requiring profit-taking.<br><br><strong>Hold rationale:</strong> With a stop at $460, your downside from current levels is ~7.5% before you exit. The upside if the AI memory supercycle continues: $600+ (analyst estimates vary). Hold the full 33 shares.'
+  },
+  CRDO: {
+    name: 'Credo Technology Group', ticker: 'CRDO', exchange: 'NASDAQ', isin: 'KYG254571055',
+    shares: 62, costPrice: 174.53, currency: 'USD',
+    currentPrice: 190.15, currentPriceNote: 'May 13, 2026; 52-week low $55.75, high $213.80',
+    pnlPct: 8.9, pnlAbs: '+$968',
+    week52Low: 55.75, week52High: 213.80,
+    rsi: '60–65 (Elevated, not extreme)', macd: 'Positively sloped; momentum intact',
+    dividend: 'None',
+    rec: 'HOLD — do not add above $190',
+    stop: '$165 (previous consolidation zone)',
+    addLevel: '$170–175 (prior resistance turned support)',
+    analysis: '<strong>Thesis:</strong> CRDO makes active electrical cables (AECs) used in AI data centre interconnects — a critical component as hyperscalers (Microsoft, Amazon, Google) scale their AI infrastructure. This is a direct play on AI capex, with less commoditisation risk than memory.<br><br><strong>Price action:</strong> At $190, CRDO is ~89% of its 52-week high of $213.80. The stock pulled back to $186.52 (May 13 low) before recovering. This indicates healthy consolidation below the all-time high.<br><br><strong>RSI/MACD:</strong> RSI ~60–65 — still in bullish territory but not overbought. MACD positively sloped. No sell signal yet.<br><br><strong>Risk:</strong> US-China tariff uncertainty (if the Xi summit goes badly), customer concentration risk (if a hyperscaler pauses AI capex), competition from Marvell and Broadcom. However, CRDO has first-mover advantage in AEC technology.<br><br><strong>Strategy:</strong> Hold all 62 shares. Add 10–15 more shares on a pullback to $170–175 (the prior resistance level that should now act as support). Stop: $165.'
+  },
+  CLS: {
+    name: 'Celestica Inc.', ticker: 'CLS', exchange: 'NYSE/TSX', isin: 'CA15101Q2071',
+    shares: 15, costPrice: 401.12, currency: 'USD',
+    currentPrice: 374.01, currentPriceNote: 'May 14, 2026; analyst target $374.63',
+    pnlPct: -6.8, pnlAbs: '-$406',
+    week52Low: null, week52High: null,
+    rsi: '~45 (Neutral, mild oversold)', macd: 'Slightly negative; no strong signal',
+    dividend: 'Small dividend',
+    rec: 'HOLD — thesis intact, at fair value',
+    stop: '$330 (analyst downside range floor)',
+    addLevel: '$340–350 on further dip',
+    analysis: '<strong>Context:</strong> Celestica provides electronics manufacturing services (EMS) primarily for AI data centre infrastructure. At current price of $374, it is almost exactly at the 18-analyst consensus price target of $374.63 — meaning you are holding at fair value, not a discount.<br><br><strong>Bull case:</strong> If AI data centre spending accelerates beyond current forecasts, CLS could re-rate to the high end of the range ($450). The US-China tariff truce is a tailwind for supply chains.<br><br><strong>Bear case:</strong> Supply chain disruptions, customer concentration risk, margin pressure. The stock is already off its highs.<br><br><strong>Strategy:</strong> Hold at fair value with stop at $330. Add on a pullback below $350 which would create a meaningful margin of safety vs. the $374 consensus target. Do not buy at current prices — there is no margin of safety.'
+  },
+  ABBV: {
+    name: 'AbbVie Inc.', ticker: 'ABBV', exchange: 'NYSE', isin: 'US00287Y1091',
+    shares: 30, costPrice: 203.71, currency: 'USD',
+    currentPrice: 207.86, currentPriceNote: 'May 13, 2026; 52-week range $176.57–$244.81',
+    pnlPct: 2.0, pnlAbs: '+$124',
+    week52Low: 176.57, week52High: 244.81,
+    rsi: '~55–60 (Neutral/healthy)', macd: 'Positive crossover on recent +3.1% day',
+    dividend: '~3.5% yield — Dividend Aristocrat (verify exact current yield)',
+    rec: 'HOLD — defensive quality with upside',
+    stop: '$185 (52-week range midpoint)',
+    addLevel: '$195–200 on next dip',
+    analysis: '<strong>Defensive quality:</strong> AbbVie is a Dividend Aristocrat with a strong pipeline beyond Humira. The stock is undervalued relative to analyst consensus of $256.28 — approximately 23% upside from current $207.86. 18 analysts have a BUY consensus.<br><br><strong>Risk/reward:</strong> 52-week range is $176–$245. Currently at $207, the stock sits in the lower half of its range with meaningful upside and a solid dividend yield (~3.5% — verify) providing income while you wait.<br><br><strong>Why hold in current environment:</strong> With Iran uncertainty (20% probability of escalation) and potential hot retail sales data, having a defensive healthcare dividend grower provides portfolio ballast. ABBV is not correlated with memory/tech cycles.<br><br><strong>Catalyst:</strong> FDA approvals for pipeline drugs (verify current pipeline status). If ABBV breaks above $215, the path to $244 opens. Stop: $185.'
+  },
+  EQQQ: {
+    name: 'Invesco EQQQ Nasdaq-100 UCITS ETF', ticker: 'EQQQ', exchange: 'XETRA/Milan', isin: 'IE0032077012',
+    shares: 29, costPrice: 550.00, currency: 'EUR',
+    currentPrice: 608.55, currentPriceNote: 'May 14, 2026 intraday Milan (EQQQ.MI)',
+    pnlPct: 10.6, pnlAbs: '+€1,698',
+    week52Low: null, week52High: null,
+    rsi: '~65 (Approaching elevated)', macd: 'Bullish crossover maintained',
+    dividend: 'None (accumulating ETF)',
+    rec: 'HOLD — core position, do not trade around it',
+    stop: '€550 (your cost basis)',
+    addLevel: '€560–575 on meaningful pullback',
+    analysis: '<strong>Core holding:</strong> EQQQ tracks the Nasdaq-100 which today is +1.2%. US-China tariff truce is strongly positive for the tech-heavy index. AI spending cycle continues to drive Nasdaq outperformance vs. the broader S&P 500.<br><br><strong>PPI headwind:</strong> PPI jumped +1.4% MoM in April — if this translates into sustained inflation, the Fed will keep rates higher for longer, which is a valuation headwind for long-duration growth assets like tech. This is the primary risk for EQQQ.<br><br><strong>Technical:</strong> RSI ~65 — not in overbought territory yet. MACD bullish. The trend is your friend. Do not try to time this position — it is a core, long-term holding.<br><br><strong>Strategy:</strong> Hold all 29 shares. Your profit of +€1,698 (+10.6%) is a healthy gain on a low-cost index position. If EQQQ pulls back below €570 (following a market shock), consider adding 5 more shares.'
+  },
+  VDIV: {
+    name: 'VanEck Morningstar Developed Markets Dividend Leaders UCITS ETF', ticker: 'VDIV', exchange: 'XETRA', isin: 'NL0011683594',
+    shares: 800, costPrice: 52.46, currency: 'EUR',
+    currentPrice: 52.04, currentPriceNote: 'May 12, 2026; last dividend €0.21 paid May 9, 2026',
+    pnlPct: -0.8, pnlAbs: '-€336',
+    week52Low: null, week52High: null,
+    rsi: '~48 (Neutral — consolidating)', macd: 'Flat to slightly negative',
+    dividend: 'Forward yield: 1.62%; last payment €0.21 (May 9, 2026)',
+    rec: 'HOLD — your largest position, income anchor',
+    stop: '€48 (meaningful technical support)',
+    addLevel: '€49–50 if equity markets pull back broadly',
+    analysis: '<strong>Your largest holding:</strong> At 800 shares × €52.04 ≈ €41,632, VDIV is your biggest single position. It represents diversified dividend income across developed market leaders.<br><br><strong>Income:</strong> Forward yield of 1.62% on €41,632 = approximately €675/year in dividends. The ETF distributed €0.21 per share on May 9, 2026 — that was €168 in your account just 5 days ago.<br><br><strong>Performance lag:</strong> The -0.8% performance vs. your cost is expected — this is an income ETF, not a growth ETF. In an environment where tech (MU +79%, SNDK +58%) outperforms, VDIV will lag. That is by design.<br><br><strong>Role:</strong> VDIV is your income anchor and diversification base. Do NOT trim this position. If markets sell off due to Iran escalation or hot macro data, VDIV will be more defensive than your tech positions.<br><br><strong>Dividends from VDIV:</strong> Verify the ex-dividend date schedule from VanEck investor relations to maximise tax efficiency.'
+  },
+  BBVA: {
+    name: 'Banco Bilbao Vizcaya Argentaria', ticker: 'BBVA', exchange: 'BME', isin: 'ES0113211835',
+    shares: 700, costPrice: 19.62, currency: 'EUR',
+    currentPrice: 18.24, currentPriceNote: 'Early May 2026 estimate — verify exact current price',
+    pnlPct: -7.0, pnlAbs: '-€965 (estimated)',
+    week52Low: null, week52High: null,
+    rsi: '~40–45 (Moderately oversold)', macd: 'Negative — downtrend in recent weeks',
+    dividend: '~5-6% yield (verify from BBVA IR)',
+    rec: 'HOLD with stop at €17.00',
+    stop: '€17.00',
+    addLevel: '€18.50–19.00 if price stabilises',
+    analysis: '<strong>Context:</strong> BBVA is down ~7% from your portfolio price. European banks as a sector had their best year on record in 2025, and Q1 2026 sector earnings are up +10.2%. The problem for BBVA specifically may be: (1) emerging market exposure (Mexico, Turkey) adds FX and political risk; (2) Iran conflict creates global EM risk-off sentiment.<br><br><strong>Dividend support:</strong> BBVA historically pays ~5-6% dividend yield — at €18.24, if the yield holds, you are being paid to wait. The dividend partially offsets the capital loss.<br><br><strong>Technical:</strong> RSI ~40–45 suggests the stock is approaching oversold territory — historically a contrarian buying opportunity. However, a falling MACD suggests the downtrend has not bottomed yet.<br><br><strong>Strategy:</strong> Hold with stop at €17.00 (below which the thesis breaks). Do not add until price stabilises above €19.00 and shows a MACD crossover. If stop is triggered, consider rotating into ING or ABN AMRO (less EM exposure). Verify exact current price before any action.'
+  },
+  MAP: {
+    name: 'Mapfre SA', ticker: 'MAP', exchange: 'BME', isin: 'ES0124244E34',
+    shares: 3100, costPrice: 4.26, currency: 'EUR',
+    currentPrice: 3.94, currentPriceNote: 'May 2026 estimate — verify current price',
+    pnlPct: -7.5, pnlAbs: '-€992',
+    week52Low: null, week52High: null,
+    rsi: '~38 (Oversold — but no reversal signal)', macd: 'Negative; downtrend intact',
+    dividend: '~5-6% yield (verify from Mapfre IR)',
+    rec: 'TRIM — sell 1,000 shares; stop on remainder at €3.75',
+    stop: '€3.75',
+    addLevel: 'Only if price recovers above €4.10 with volume confirmation',
+    analysis: '<strong>Problem position:</strong> MAP is your largest loser in EUR terms (-€992). The insurance sector faces structural headwinds in a high-inflation environment: energy-driven inflation increases claim severity (car damage, property rebuild costs) while premium repricing takes time.<br><br><strong>Fundamental concern:</strong> No near-term positive catalyst visible. Mapfre is a Spanish insurance group with significant Latin America exposure — the Iran conflict and EM risk-off adds another layer of uncertainty.<br><br><strong>Dividend buffer:</strong> At ~5-6% dividend yield (verify), Mapfre\'s income partially offsets the capital loss. This is why a full exit is not recommended — keep 2,100 shares for income.<br><br><strong>Action plan:</strong> (1) Sell 1,000 shares at ~€3.94 = €3,940 cash generated. This reduces your average cost slightly and reduces concentration. (2) Set a hard stop at €3.75 on the remaining 2,100 shares — if triggered, exit fully. (3) If price recovers above €4.10 on volume, the bear thesis may be breaking down and you can re-evaluate. Verify current price before placing the sell order.'
+  },
+  A3M: {
+    name: 'Atresmedia Corporación de Medios de Comunicación', ticker: 'A3M', exchange: 'BME', isin: 'ES0109427734',
+    shares: 2000, costPrice: 5.13, currency: 'EUR',
+    currentPrice: 5.30, currentPriceNote: 'May 2026 data',
+    pnlPct: 3.3, pnlAbs: '+€340',
+    week52Low: null, week52High: null,
+    rsi: '~50 (Neutral)', macd: 'Flat to slightly positive',
+    dividend: '~6-7% yield (verify from Atresmedia IR — I am not certain of exact current yield)',
+    rec: 'HOLD — stable dividend payer',
+    stop: '€4.70 (below which reassess)',
+    addLevel: '€5.00–5.10 on pullback to cost basis',
+    analysis: '<strong>Business:</strong> Atresmedia is Spain\'s leading commercial broadcaster (Antena 3, La Sexta, cuatro channels). Advertising revenue tracks GDP — with Spain\'s economy holding up well, Atresmedia should deliver stable revenues.<br><br><strong>Dividend thesis:</strong> Historically a high dividend payer (~6-7% yield — please verify from company IR as I am not fully certain). At 2,000 shares and €5.30 current price, this position pays roughly €740-840/year in dividends if the yield holds (verify).<br><br><strong>Risks:</strong> Digital disruption (streaming competition), Spanish political risk, advertising cyclicality. These are known risks, not new ones.<br><br><strong>Technical:</strong> At €5.30 vs. cost of €5.13, the stock is marginally up. RSI ~50 is neutral. No action needed — just collect the dividend.<br><br><strong>Strategy:</strong> Hold. If the stock pulls back to €5.00-5.10 (your cost basis), that is an opportunity to add a small number of shares. Stop at €4.70.'
+  },
+  LITE: {
+    name: 'Lumentum Holdings Inc.', ticker: 'LITE', exchange: 'NASDAQ', isin: 'US55024U1097',
+    shares: 14, costPrice: 895.11, currency: 'USD',
+    currentPrice: '⚠️ UNKNOWN — verify urgently', currentPriceNote: 'Up 957% past year, 88% YTD as of early March 2026; May 14 price not confirmed',
+    pnlPct: null, pnlAbs: 'Unknown',
+    week52Low: null, week52High: null,
+    rsi: 'Cannot assess without current price', macd: 'Cannot assess without current price',
+    dividend: 'None',
+    rec: '⚠️ VERIFY CURRENT PRICE URGENTLY before any decision',
+    stop: 'TBD after price confirmation',
+    addLevel: 'TBD',
+    analysis: '<strong>⚠️ URGENT: Verify current price.</strong> Lumentum (LITE) is an optical component manufacturer that has surged dramatically in 2026 due to AI infrastructure demand. As of early March 2026, it was up 88% YTD and +957% over 12 months.<br><br>However, I could not confirm the specific May 14, 2026 price in my research. Given:<br>• Your cost: $895.11<br>• The stock was tracking a massive uptrend through March<br>• The March sector selloff (LITE dropped 11% on March 3) and the May sector volatility<br><br>The current price could be significantly above or below $895. <strong>Do not make any trading decision until you have confirmed the current price from your broker.</strong><br><br>If the current price is above $1,200, consider taking partial profits (sell 4–5 shares). If it is below $700, review the thesis — the selloff may indicate fundamental deterioration.'
+  },
+  ENR: {
+    name: 'Siemens Energy AG', ticker: 'ENR', exchange: 'XETRA', isin: 'DE000ENER6Y0',
+    shares: 60, costPrice: 168.84, currency: 'EUR',
+    currentPrice: '~€168–212 (verify on XETRA)', currentPriceNote: 'May 7 reference ~€168-212; significant uncertainty — verify ENR.DE on XETRA',
+    pnlPct: null, pnlAbs: 'Unknown — verify',
+    week52Low: null, week52High: null,
+    rsi: 'If at €212: ~65; verify', macd: 'Likely positive if price has risen',
+    dividend: 'Small/none currently (company previously suspended dividend during restructuring; verify IR)',
+    rec: 'HOLD — strong thesis. Verify current price.',
+    stop: '€145 (meaningful technical support)',
+    addLevel: '€170–175 (around your cost basis) on any dip',
+    analysis: '<strong>Thesis:</strong> Siemens Energy is a global leader in gas turbines, wind energy, and grid infrastructure. Three catalysts drive this position:<br>(1) <strong>Iran conflict</strong>: Elevated oil/gas prices and energy security concerns drive capex in LNG, gas infrastructure, and grid resilience — all Siemens Energy markets.<br>(2) <strong>AI data centres</strong>: Massive electricity demand from AI creates a grid buildout supercycle. Siemens Energy\'s grid technology segment is booked out.<br>(3) <strong>European defense/energy transition</strong>: EU energy independence drives gas turbine orders.<br><br><strong>Price uncertainty:</strong> A search result referenced $212 for Siemens Energy on May 7 — this could be EUR (on XETRA) or there was a confusion. Your portfolio cost was €168.84. <strong>Please verify the current EUR price on XETRA (ticker: ENR.DE) before drawing P&L conclusions.</strong><br><br><strong>Strategy:</strong> Hold all 60 shares. If price has risen to ~€212, that\'s +25% — congratulations. No need to trim at this level given strong tailwinds. If price is still at cost (~€169), thesis is unaffected — hold.'
+  },
+  LOG: {
+    name: 'Logista Integral SA', ticker: 'LOG', exchange: 'BME', isin: 'ES0105027009',
+    shares: 100, costPrice: 32.70, currency: 'EUR',
+    currentPrice: 33.38, currentPriceNote: 'Approaching 52-week high of €34.48',
+    pnlPct: 2.1, pnlAbs: '+€68',
+    week52Low: 26.84, week52High: 34.48,
+    rsi: '~60–65 (Healthy uptrend)', macd: 'Positive',
+    dividend: '~7-8% yield historically (verify from Logista IR — I am not certain of exact current yield)',
+    rec: 'HOLD — set trim at €34.00–34.50',
+    stop: '€30.00',
+    addLevel: '€31.50–32.00 on pullback',
+    analysis: '<strong>Business:</strong> Logista is a leading European tobacco and goods distributor. Regulated, stable cash flows. One of the highest dividend payers on the Spanish market historically.<br><br><strong>Technical:</strong> At €33.38, Logista is approaching its 52-week high of €34.48. RSI ~60-65 in a healthy uptrend. Resistance at the 52-week high.<br><br><strong>Dividend thesis:</strong> If the dividend yield is approximately 7-8% (verify!), this position generates roughly €230-260/year in income on 100 shares — very attractive on a small position.<br><br><strong>Strategy:</strong> Hold. Set a sell order to trim 20–30 shares at €34.00-34.50 (near the 52-week high) to partially realise gains while keeping 70-80 shares for ongoing dividend income. Support/rebuy at €31.50-32.00.'
+  },
+  HOME: {
+    name: 'Neinor Homes SA', ticker: 'HOME', exchange: 'BME', isin: 'ES0105251005',
+    shares: 305, costPrice: 16.90, currency: 'EUR',
+    currentPrice: 17.02, currentPriceNote: 'April 24, 2026 data; verify current',
+    pnlPct: 0.7, pnlAbs: '+€37',
+    week52Low: null, week52High: null,
+    rsi: '~52 (Neutral)', macd: 'Slightly positive',
+    dividend: 'Growing dividend — verify from Neinor IR',
+    rec: 'HOLD — housing fundamentals strong',
+    stop: '€15.50',
+    addLevel: '€16.00–16.50 on pullback',
+    analysis: '<strong>Thesis:</strong> Neinor Homes is Spain\'s leading residential developer. The Community of Madrid density plan (allowing more housing units on existing land) is a structural tailwind — Neinor has significant Madrid land bank exposure.<br><br><strong>Company guidance:</strong> Neinor reiterated 2026-27 guidance: €1.2B+ FCF expected, strong forward sales order book, low cancellations, resilient margins. This is management conveying high confidence.<br><br><strong>Spanish housing market:</strong> Demand significantly exceeds supply across major Spanish cities, particularly Madrid and Barcelona. New housing starts lag demand. This structural deficit supports prices.<br><br><strong>RSI/MACD:</strong> Neutral technical picture — no overbought signals. The stock is moving steadily without excess speculation.<br><br><strong>Strategy:</strong> Hold all 305 shares. Add 50-100 shares on a pullback to €16.00-16.50 (about 5% below current). Stop: €15.50.'
+  },
+  MVC: {
+    name: 'Metrovacesa SA', ticker: 'MVC', exchange: 'BME', isin: 'ES0105122024',
+    shares: 958, costPrice: 11.92, currency: 'EUR',
+    currentPrice: 11.75, currentPriceNote: 'May 2026 estimate; analyst consensus target €10.81',
+    pnlPct: -1.4, pnlAbs: '-€162',
+    week52Low: null, week52High: null,
+    rsi: '~48 (Neutral)', macd: 'Flat to slightly negative',
+    dividend: 'Verify from Metrovacesa IR',
+    rec: 'HOLD — Madrid density plan is positive',
+    stop: '€10.50',
+    addLevel: '€11.00–11.20 on dip',
+    analysis: '<strong>Context:</strong> Metrovacesa is a Spanish residential developer and land owner. The analyst consensus target of €10.81 is below the current price of €11.75 — suggesting the market is pricing in more optimism than analysts are. This could mean: (a) the analysts are wrong (the Madrid density plan changes the calculus); or (b) the stock is slightly overvalued at current levels.<br><br><strong>Madrid density plan:</strong> The Community of Madrid plans to increase permitted building density on serviced land — Metrovacesa, as a major land bank holder, is a direct beneficiary. This is a structural positive that may not yet be fully reflected in analyst targets.<br><br><strong>Sibling comparison:</strong> Metrovacesa and Neinor Homes (also in your portfolio) have similar themes. You have 958 shares of MVC and 305 of HOME — consider whether this is appropriate concentration in the Spanish residential sector.<br><br><strong>Strategy:</strong> Hold. The density plan announcement warrants patience. Stop: €10.50. If the stock falls below analyst consensus target (€10.81), that would be a warning signal worth reviewing.'
+  }
+};
+
+function showStockDetail() {
+  const ticker = document.getElementById('stockSelector').value;
+  const s = stockData[ticker];
+  if (!s) return;
+
+  const pnlColor = s.pnlPct > 0 ? '#68d391' : s.pnlPct < 0 ? '#fc8181' : '#a0aec0';
+  const pnlSign = s.pnlPct > 0 ? '+' : '';
+
+  document.getElementById('stockDetailContent').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-card">
+        <h3>Position Summary</h3>
+        <div class="detail-row"><span class="dk">Company</span><span class="dv">${s.name}</span></div>
+        <div class="detail-row"><span class="dk">Ticker</span><span class="dv" style="color:#63b3ed">${s.ticker} (${s.exchange})</span></div>
+        <div class="detail-row"><span class="dk">ISIN</span><span class="dv">${s.isin}</span></div>
+        <div class="detail-row"><span class="dk">Shares held</span><span class="dv">${s.shares}</span></div>
+        <div class="detail-row"><span class="dk">Cost price</span><span class="dv">${s.currency === 'EUR' ? '€' : '$'}${typeof s.costPrice === 'number' ? s.costPrice.toFixed(2) : s.costPrice}</span></div>
+        <div class="detail-row"><span class="dk">Current price*</span><span class="dv">${typeof s.currentPrice === 'number' ? (s.currency === 'EUR' ? '€' : '$') + s.currentPrice.toFixed(2) : s.currentPrice}</span></div>
+        <div class="detail-row"><span class="dk">P&L %</span><span class="dv" style="color:${pnlColor}">${s.pnlPct !== null ? pnlSign + s.pnlPct + '%' : 'Unknown'}</span></div>
+        <div class="detail-row"><span class="dk">P&L (abs)</span><span class="dv" style="color:${pnlColor}">${s.pnlAbs}</span></div>
+        <div class="detail-row"><span class="dk">Price note</span><span class="dv" style="font-size:11px;color:#718096">${s.currentPriceNote}</span></div>
+      </div>
+      <div class="detail-card">
+        <h3>Technical Indicators</h3>
+        <div class="detail-row"><span class="dk">RSI (14-day est.)</span><span class="dv">${s.rsi}</span></div>
+        <div class="detail-row"><span class="dk">MACD signal</span><span class="dv">${s.macd}</span></div>
+        <div class="detail-row"><span class="dk">Dividend yield</span><span class="dv">${s.dividend}</span></div>
+        <div class="detail-row"><span class="dk">Recommendation</span><span class="dv" style="color:#f6ad55">${s.rec}</span></div>
+        <div class="detail-row"><span class="dk">Stop loss</span><span class="dv" style="color:#fc8181">${s.stop}</span></div>
+        <div class="detail-row"><span class="dk">Add/re-entry level</span><span class="dv" style="color:#68d391">${s.addLevel}</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="margin-top:16px">
+      <h3>Analysis</h3>
+      <div class="analysis-text">${s.analysis}</div>
+    </div>
+    <p class="note" style="margin-top:12px">* RSI and MACD are directional estimates based on price action context — not computed from a full price series. Verify from your trading platform. All prices require confirmation from a live feed before trading.</p>
+  `;
+}
+
+// Initialize detail panel
+showStockDetail();
+</script>
+
+</body>
+</html>
